@@ -53,9 +53,10 @@ export class Character {
     }
     
     // Update velocity via location
-    this.gameObject.position.addScaledVector(this.velocity, deltaTime);
+    this.location.addScaledVector(this.velocity, deltaTime);
     
     this.checkBounds(bounds);
+    this.gameObject.position.copy(this.location);
   }
 
   // Apply force to our character
