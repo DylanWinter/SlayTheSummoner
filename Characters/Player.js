@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { VectorUtil } from '../Utils/VectorUtil.js';
-import { HealthBar } from './PlayerHealthBar.js';
+import { UI } from './UI.js';
 
 export class Player {
   constructor() {
@@ -20,18 +20,18 @@ export class Player {
     this.maxHealth = 100;
     this.health = this.maxHealth;
     this.strength = 1; // determines damage per attack
-    this.bombs = 0;
+    this.bombs = 3;
     this.isAlive = true;
 
-    // Creates health bar and links it to the player
-    this.healthBar = new HealthBar(this);
+    // Creates UI and links it to the player
+    this.ui = new UI(this);
   }
 
   // Main function to handle player movement actions
   update(keys, mouse, camera, deltaTime, map) {
     this.handleMovement(keys, deltaTime, map);
     this.handleLook(mouse, camera);
-    this.healthBar.update();
+    this.ui.update();
   }
 
   // Updates player movement based on keyboard input. Handles collisions.
@@ -91,7 +91,7 @@ export class Player {
 
   takeDamage(amount) {
     this.health -= amount;
-    this.healthBar.updateHealthBar();
+    this.ui.updateUI();
 
     console.log(
       `You took %c${amount}%c damage.`,
@@ -110,7 +110,7 @@ export class Player {
   heal(amount) {
     if (!this.isAlive) return; // heal does not happen if the player is dead
     this.health = Math.min(this.maxHealth, this.health + amount);
-    this.healthBar.updateHealthBar();
+    this.ui.updateUI();
     
     console.log(`You healed for %c${amount}%c.`, "color: green; font-weight: bold;");
 
@@ -120,7 +120,7 @@ export class Player {
   // Used for max health upgrades/downgrades
   changeMaxHealth(amount) {
     this.maxHealth += amount;
-    this.updateHealthBar(); // Update health bar after damage
+    this.updateUI();
   }
 
 

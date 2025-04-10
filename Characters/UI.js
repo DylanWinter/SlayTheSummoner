@@ -2,13 +2,17 @@ import * as THREE from 'three';
 import { VectorUtil } from '../Utils/VectorUtil.js';
 
 
-export class HealthBar {
+export class UI {
     constructor(player) {
-      this.player = player; // links the health bar to the player
+      this.player = player; // links the UI to the player
       this.healthBarElement = this.createHealthBar();
+      this.strengthTextElement = this.createTextElement();
+      this.bombCountTextElement = this.createTextElement();
       document.body.appendChild(this.healthBarElement);
+      document.body.appendChild(this.strengthTextElement);
+      document.body.appendChild(this.bombCountTextElement);
 
-      this.updateHealthBar();
+      this.updateUI();
     }
 
 
@@ -45,8 +49,30 @@ export class HealthBar {
         return healthBar;
     }
 
+
+    // --- Text elements for stats below the health bar --- //
+    createTextElement() {
+      const textElement = document.createElement('div');
+      textElement.style.position = 'absolute';
+      textElement.style.left = '20px'; // positioned on the left side
+      textElement.style.color = '#000';
+      textElement.style.fontSize = '18px';
+      textElement.style.fontWeight = 'bold';
+      textElement.style.pointerEvents = 'none';
+
+      // Automatically adjust vertical spacing if a new stat element is appended
+      if (!this.lastElementTop) {
+        this.lastElementTop = 40; // sets initial top value for the first text element
+      }
     
-    updateHealthBar() {
+      textElement.style.top = `${this.lastElementTop}px`;
+      this.lastElementTop += 30; // increments the top value for the next stat element
+
+      return textElement;
+    }
+
+    
+    updateUI() {
         const healthPercentage = this.player.health / this.player.maxHealth; // 0 to 1
         this.healthBarElement.style.width = `${healthPercentage * 100}%`;
     
@@ -61,12 +87,18 @@ export class HealthBar {
           this.healthBarElement.style.backgroundColor = '#ff0000'; // red when health is low
         }
 
-        // Update the text
+        // Updates the health bar text
         this.healthText.textContent = `${this.player.health} / ${this.player.maxHealth}`;
+
+        // Updates strength text
+        this.strengthTextElement.textContent = `Strength: ${this.player.strength}`;
+
+        // Updates bomb count text
+        this.bombCountTextElement.textContent = `Bombs: ${this.player.bombs}`;
     }
     
 
     update() {
-        this.updateHealthBar();
+        this.updateUI();
     }
 }

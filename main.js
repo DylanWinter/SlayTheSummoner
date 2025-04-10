@@ -1,6 +1,9 @@
 import * as THREE from 'three';
 import { Player } from './Characters/Player.js';
+import { UI } from './Characters/UI.js';
+import {Vector3} from "three";
 import { GameMap } from "./World/GameMap";
+
 
 
 // Create Scene
