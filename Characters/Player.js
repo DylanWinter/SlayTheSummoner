@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { VectorUtil } from '../Utils/VectorUtil.js';
+import { HealthBar } from './PlayerHealthBar.js';
 
 export class Player {
   constructor() {
@@ -7,22 +8,35 @@ export class Player {
     let coneMat = new THREE.MeshStandardMaterial({color: "blue"});
     let mesh = new THREE.Mesh(coneGeo, coneMat);
     mesh.rotation.x = Math.PI/2;
+
     this.gameObject = new THREE.Group();
     this.gameObject.add(mesh);
 
-    this.moveSpeed = 15;
+    this.moveSpeed = 10;
     this.location = new THREE.Vector3(0, 0, 0);
     this.raycaster = new THREE.Raycaster();
+
+    // Player Stats
+    this.maxHealth = 100;
+    this.health = this.maxHealth;
+    this.strength = 1; // determines damage per attack
+    this.bombs = 0;
+    this.isAlive = true;
+
+    // Creates health bar and links it to the player
+    this.healthBar = new HealthBar(this);
   }
 
-  // Main function for player movement actions
-  update(keys, mouse, camera, deltaTime, map) {
-    this.handleMovement(keys, deltaTime, map);
+
+  update(keys, mouse, camera, deltaTime, bounds) {
+    this.handleMovement(keys, deltaTime, bounds);
     this.handleLook(mouse, camera);
+    this.healthBar.update();
+
   }
 
-  // Moves the player based on keyboard inputs, checking for collisions
-  handleMovement(keys, deltaTime, map) {
+
+  handleMovement(keys, deltaTime, bounds) {
     let moveVector = new THREE.Vector3();
     if (keys.a) {
       moveVector.add(new THREE.Vector3(-1, 0, 0));
@@ -37,12 +51,12 @@ export class Player {
       moveVector.add(new THREE.Vector3(0, 0, 1));
     }
     moveVector.setLength(this.moveSpeed * deltaTime);
-    let newPos = VectorUtil.add(this.location, moveVector)
-    this.handleCollision(this.location, newPos, map, moveVector);
+    this.location.add(moveVector);
+    this.checkBounds(bounds)
     this.gameObject.position.copy(this.location);
   }
 
-  // Rotates the player based on mouse position
+
   handleLook(mouse, camera) {
     this.raycaster.setFromCamera(mouse, camera);
     const planeY = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
@@ -53,25 +67,76 @@ export class Player {
     this.gameObject.rotation.y = Math.atan2(dx, dz);
   }
 
-  // Checks for collisions independently in x and z directions. If none found, updates location in that direction.
-  handleCollision(currPos, newPos, map, moveVector) {
-    let oldGridIndex = this.convertToGridIndex(currPos, map);
-    let newGridIndex = this.convertToGridIndex(newPos, map)
-    if (map.mapGraph.getAt(newGridIndex.x, oldGridIndex.z).isTraversable()) {
-      this.location.x += moveVector.x;
-    }
-    if (map.mapGraph.getAt(oldGridIndex.x, newGridIndex.z).isTraversable()) {
-      this.location.z += moveVector.z;
+
+  // Wrap around the scene
+  checkBounds(bounds) {
+    this.location.x = THREE.MathUtils.euclideanModulo(
+      this.location.x - bounds.min.x,
+      bounds.max.x - bounds.min.x
+    ) + bounds.min.x;
+
+    this.location.z = THREE.MathUtils.euclideanModulo(
+      this.location.z - bounds.min.z,
+      bounds.max.z - bounds.min.z
+    ) + bounds.min.z;
+  }
+
+
+  // --- Player stats manipulation methods --- //
+
+  takeDamage(amount) {
+    this.health -= amount;
+    this.healthBar.updateHealthBar();
+
+    console.log(
+      `You took %c${amount}%c damage.`,
+      "color: red; font-weight: bold;",
+      "color: white;"
+    );
+
+    if (this.health <= 0) {
+      this.health = 0;
+      this.isAlive = false;
+
+      console.log(`You are dead!`);
     }
   }
 
-  // Converts a world space position into a usable MapGraph index
-  convertToGridIndex(location, map) {
-    return new THREE.Vector3(
-      Math.floor(location.x / map.tileSize) + Math.abs(map.bounds.max.x - map.bounds.min.x) / map.tileSize / 2,
-      location.y,
-      Math.floor(location.z / map.tileSize) + Math.abs(map.bounds.max.z - map.bounds.min.z) / map.tileSize / 2);
+  heal(amount) {
+    if (!this.isAlive) return; // heal does not happen if the player is dead
+    this.health = Math.min(this.maxHealth, this.health + amount);
+    this.healthBar.updateHealthBar();
+    
+    console.log(`You healed for %c${amount}%c.`, "color: green; font-weight: bold;");
+
   }
 
+
+  // Used for max health upgrades/downgrades
+  changeMaxHealth(amount) {
+    this.maxHealth += amount;
+    this.updateHealthBar(); // Update health bar after damage
+  }
+
+
+  // Used for strength upgrades/downgrades
+  changeStrength(amount) {
+    this.strength += amount;
+
+    // Makes sure player does not go under 1 strength
+    if (this.strength <= 0) {
+      this.strength = 1;
+    }
+  }
+
+
+  // Used to increment/decrement bomb count
+  changeBombCount(amount) {
+    this.bombs += amount;
+
+    // Makes sure player does not have less than 0 bombs
+    if (this.bombs < 0) {
+      this.bombs = 0;
+    }
+  }
 }
-
