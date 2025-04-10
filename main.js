@@ -1,21 +1,23 @@
 import * as THREE from 'three';
-import { Character } from './Characters/Character.js';
 import { Player } from './Characters/Player.js';
 import { UI } from './Characters/UI.js';
 import {Vector3} from "three";
+import { GameMap } from "./World/GameMap";
+
 
 
 // Create Scene
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer();
-
 // Create clock
 const clock = new THREE.Clock();
-
 // Declare bounds
 let bounds;
+// Create map
+let gameMap;
 
+// Create player
 const player = new Player();
 // Input handling
 const mouse = new THREE.Vector2();
@@ -37,14 +39,14 @@ window.addEventListener('mousemove', (event) => {
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 });
 
-// Setup our scene
+// Set up our scene
 function init() {
 
   scene.background = new THREE.Color(0xffffff);
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  camera.position.y = 25;
+  camera.position.y = 40;
   camera.lookAt(0,0,0);
 
   // Create Light
@@ -57,6 +59,9 @@ function init() {
     new THREE.Vector3(-20,0,-20), // scene min
     new THREE.Vector3(20,0,20) // scene max
   );
+
+  gameMap = new GameMap();
+  scene.add(gameMap.gameObject);
 
   scene.add(player.gameObject)
 
@@ -72,8 +77,9 @@ function animate() {
 
   // Change in time
   let deltaTime = clock.getDelta();
-
-  player.update(keys, mouse, camera, deltaTime, bounds);
+  player.update(keys, mouse, camera, deltaTime, gameMap);
+  camera.position.x = player.gameObject.position.x;
+  camera.position.z = player.gameObject.position.z;
 }
 
 init();

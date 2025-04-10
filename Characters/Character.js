@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { VectorUtil } from '../Utils/VectorUtil.js';
 
 /**
  * 
