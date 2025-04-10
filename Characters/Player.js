@@ -20,6 +20,7 @@ export class Player {
     this.maxHealth = 100;
     this.health = this.maxHealth;
     this.strength = 1; // determines damage per attack
+    this.bombs = 0;
     this.isAlive = true;
 
     // Creates health bar and links it to the player
@@ -125,6 +126,17 @@ export class Player {
     // Makes sure player does not go under 1 strength
     if (this.strength <= 0) {
       this.strength = 1;
+    }
+  }
+
+
+  // Used to increment/decrement bomb count
+  changeBombCount(amount) {
+    this.bombs += amount;
+
+    // Makes sure player does not have less than 0 bombs
+    if (this.bombs < 0) {
+      this.bombs = 0;
     }
   }
 }
