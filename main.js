@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { Character } from './Characters/Character.js';
 import { Player } from './Characters/Player.js';
-import { HealthBar } from './Characters/PlayerHealthBar.js';
+import { UI } from './Characters/UI.js';
 import {Vector3} from "three";
 
 
