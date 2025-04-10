@@ -10,17 +10,19 @@ export class Player {
     this.gameObject = new THREE.Group();
     this.gameObject.add(mesh);
 
-    this.moveSpeed = 10;
+    this.moveSpeed = 15;
     this.location = new THREE.Vector3(0, 0, 0);
     this.raycaster = new THREE.Raycaster();
   }
 
-  update(keys, mouse, camera, deltaTime, bounds) {
-    this.handleMovement(keys, deltaTime, bounds);
+  // Main function for player movement actions
+  update(keys, mouse, camera, deltaTime, map) {
+    this.handleMovement(keys, deltaTime, map);
     this.handleLook(mouse, camera);
   }
 
-  handleMovement(keys, deltaTime, bounds) {
+  // Moves the player based on keyboard inputs, checking for collisions
+  handleMovement(keys, deltaTime, map) {
     let moveVector = new THREE.Vector3();
     if (keys.a) {
       moveVector.add(new THREE.Vector3(-1, 0, 0));
@@ -35,11 +37,12 @@ export class Player {
       moveVector.add(new THREE.Vector3(0, 0, 1));
     }
     moveVector.setLength(this.moveSpeed * deltaTime);
-    this.location.add(moveVector);
-    this.checkBounds(bounds)
+    let newPos = VectorUtil.add(this.location, moveVector)
+    this.handleCollision(this.location, newPos, map, moveVector);
     this.gameObject.position.copy(this.location);
   }
 
+  // Rotates the player based on mouse position
   handleLook(mouse, camera) {
     this.raycaster.setFromCamera(mouse, camera);
     const planeY = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
@@ -50,17 +53,25 @@ export class Player {
     this.gameObject.rotation.y = Math.atan2(dx, dz);
   }
 
-  // Wrap around the scene
-  checkBounds(bounds) {
-    this.location.x = THREE.MathUtils.euclideanModulo(
-      this.location.x - bounds.min.x,
-      bounds.max.x - bounds.min.x
-    ) + bounds.min.x;
-
-    this.location.z = THREE.MathUtils.euclideanModulo(
-      this.location.z - bounds.min.z,
-      bounds.max.z - bounds.min.z
-    ) + bounds.min.z;
+  // Checks for collisions independently in x and z directions. If none found, updates location in that direction.
+  handleCollision(currPos, newPos, map, moveVector) {
+    let oldGridIndex = this.convertToGridIndex(currPos, map);
+    let newGridIndex = this.convertToGridIndex(newPos, map)
+    if (map.mapGraph.getAt(newGridIndex.x, oldGridIndex.z).isTraversable()) {
+      this.location.x += moveVector.x;
+    }
+    if (map.mapGraph.getAt(oldGridIndex.x, newGridIndex.z).isTraversable()) {
+      this.location.z += moveVector.z;
+    }
   }
+
+  // Converts a world space position into a usable MapGraph index
+  convertToGridIndex(location, map) {
+    return new THREE.Vector3(
+      Math.floor(location.x / map.tileSize) + Math.abs(map.bounds.max.x - map.bounds.min.x) / map.tileSize / 2,
+      location.y,
+      Math.floor(location.z / map.tileSize) + Math.abs(map.bounds.max.z - map.bounds.min.z) / map.tileSize / 2);
+  }
+
 }
 
