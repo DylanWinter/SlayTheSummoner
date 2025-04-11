@@ -8,7 +8,7 @@ import * as THREE from 'three';
  **/
 export class Character {
 
-  constructor(color = "blue") {
+  constructor(color = "red") {
 
     // Creating a cone game object for our Character
     let coneGeo = new THREE.ConeGeometry(0.5, 1, 10);

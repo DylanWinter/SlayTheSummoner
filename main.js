@@ -3,6 +3,7 @@ import { Player } from './Characters/Player.js';
 import { UI } from './Characters/UI.js';
 import {Vector3} from "three";
 import { GameMap } from "./World/GameMap";
+import { Character } from './Characters/Character.js';
 
 
 
@@ -19,6 +20,9 @@ let gameMap;
 
 // Create player
 const player = new Player();
+
+// Test NPC
+const enemy = new Character();
 // Input handling
 const mouse = new THREE.Vector2();
 const keys = {
@@ -64,6 +68,8 @@ function init() {
   scene.add(gameMap.gameObject);
 
   scene.add(player.gameObject)
+
+  scene.add(enemy.gameObject);
 
   // First call to animate
   animate();
