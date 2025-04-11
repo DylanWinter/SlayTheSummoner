@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import { VectorUtil } from '../Utils/VectorUtil.js';
 import { UI } from './UI.js';
+import {Projectile} from "./Projectile";
+import {Vector3} from "three";
 
 export class Player {
   constructor() {
@@ -22,6 +24,7 @@ export class Player {
     this.strength = 1; // determines damage per attack
     this.bombs = 3;
     this.isAlive = true;
+    this.projectileSpeed = 25;
 
     // Creates UI and links it to the player
     this.ui = new UI(this);
@@ -76,6 +79,15 @@ export class Player {
     if (map.mapGraph.getAt(oldGridIndex.x, newGridIndex.z).isTraversable()) {
       this.location.z += moveVector.z;
     }
+  }
+
+  fire(scene, projArray) {
+    let direction = (new Vector3(Math.sin(this.gameObject.rotation.y),
+      0,
+      Math.cos(this.gameObject.rotation.y))).normalize();
+    let proj = new Projectile(this.location, direction, this.projectileSpeed);
+    scene.add(proj.gameObject);
+    projArray.push(proj);
   }
 
   // Converts a world space position into a usable MapGraph index

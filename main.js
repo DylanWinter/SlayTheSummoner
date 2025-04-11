@@ -16,6 +16,7 @@ const clock = new THREE.Clock();
 let bounds;
 // Create map
 let gameMap;
+let projectiles = [];
 
 // Create player
 const player = new Player();
@@ -38,6 +39,7 @@ window.addEventListener('mousemove', (event) => {
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 });
+window.addEventListener('click', () => {player.fire(scene, projectiles)});
 
 // Set up our scene
 function init() {
@@ -62,7 +64,6 @@ function init() {
 
   gameMap = new GameMap();
   scene.add(gameMap.gameObject);
-
   scene.add(player.gameObject)
 
   // First call to animate
@@ -77,7 +78,17 @@ function animate() {
 
   // Change in time
   let deltaTime = clock.getDelta();
+  // Update player based on input
   player.update(keys, mouse, camera, deltaTime, gameMap);
+  // Update each projectile
+  projectiles.forEach((projectile) => {
+    projectile.update(deltaTime, gameMap);
+    if (!projectile.isAlive) {
+      scene.remove(projectile.gameObject);
+    }
+  });
+  projectiles.filter((projectile) => projectile.isAlive)
+  // Move camera
   camera.position.x = player.gameObject.position.x;
   camera.position.z = player.gameObject.position.z;
 }
