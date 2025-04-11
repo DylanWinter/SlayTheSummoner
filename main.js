@@ -87,7 +87,7 @@ function animate() {
       scene.remove(projectile.gameObject);
     }
   });
-  projectiles.filter((projectile) => projectile.isAlive)
+  projectiles = projectiles.filter((projectile) => projectile.isAlive);
   // Move camera
   camera.position.x = player.gameObject.position.x;
   camera.position.z = player.gameObject.position.z;
