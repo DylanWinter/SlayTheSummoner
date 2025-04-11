@@ -3,6 +3,7 @@ import { Player } from './Characters/Player.js';
 import { UI } from './Characters/UI.js';
 import {Vector3} from "three";
 import { GameMap } from "./World/GameMap";
+import {BaseEnemy} from "./Characters/BaseEnemy";
 
 
 
@@ -12,10 +13,11 @@ const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHei
 const renderer = new THREE.WebGLRenderer();
 // Create clock
 const clock = new THREE.Clock();
-// Declare bounds
-let bounds;
 // Create map
 let gameMap;
+
+let enemies = [];
+let projectiles = [];
 
 // Create player
 const player = new Player();
@@ -38,6 +40,7 @@ window.addEventListener('mousemove', (event) => {
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 });
+window.addEventListener('click', () => {player.fire(scene, projectiles)});
 
 // Set up our scene
 function init() {
@@ -54,15 +57,13 @@ function init() {
   directionalLight.position.set(0, 5, 5);
   scene.add(directionalLight);
 
-  // Initialize bounds
-  bounds = new THREE.Box3(
-    new THREE.Vector3(-20,0,-20), // scene min
-    new THREE.Vector3(20,0,20) // scene max
-  );
-
   gameMap = new GameMap();
-  scene.add(gameMap.gameObject);
 
+  let enemy = new BaseEnemy();
+  scene.add(enemy.gameObject)
+  enemies.push(enemy);
+
+  scene.add(gameMap.gameObject);
   scene.add(player.gameObject)
 
   // First call to animate
@@ -77,7 +78,31 @@ function animate() {
 
   // Change in time
   let deltaTime = clock.getDelta();
+
+  // Update player based on input
   player.update(keys, mouse, camera, deltaTime, gameMap);
+
+  // Update each projectile
+  projectiles.forEach((projectile) => {
+    projectile.update(deltaTime, gameMap, enemies);
+    if (!projectile.isAlive) {
+      scene.remove(projectile.gameObject);
+    }
+  });
+  projectiles = projectiles.filter(projectile => projectile.isAlive);
+
+  // Update enemies
+  enemies.forEach((enemy) => {
+    if (!enemy.isAlive) {
+      scene.remove(enemy.gameObject);
+    }
+    else {
+      enemy.update();
+    }
+  })
+  enemies.filter(enemy => enemy.isAlive)
+
+  // Move camera
   camera.position.x = player.gameObject.position.x;
   camera.position.z = player.gameObject.position.z;
 }
