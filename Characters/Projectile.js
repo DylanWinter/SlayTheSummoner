@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { VectorUtil } from '../Utils/VectorUtil.js';
+import {distance} from "three/tsl";
 
 export class Projectile {
   constructor(position, direction, speed, lifespan=2) {
@@ -15,12 +16,18 @@ export class Projectile {
     this.location = position;
     this.direction = direction;
     this.speed = speed;
+    this.lifespan = lifespan;
+    this.damage = 1;
+
     this.isAlive = true;
   }
 
-  update(deltaTime, map) {
+  update(deltaTime, map, enemies) {
     this.location = VectorUtil.add((VectorUtil.multiplyScalar(this.direction, this.speed * deltaTime)), this.location)
     this.handleCollision(this.location, map)
+    enemies.forEach(e => {
+      this.handleEnemyCollision(e);
+    })
     this.gameObject.position.copy(this.location);
   }
 
@@ -35,6 +42,14 @@ export class Projectile {
     // Handles crash in case of a projectile being out of bounds somehow
     catch (error) {
       this.isAlive = false;
+    }
+  }
+
+  handleEnemyCollision(enemy) {
+    if (this.location.distanceTo(enemy.location) < enemy.size && this.isAlive)
+    {
+      this.isAlive = false;
+      enemy.takeDamage(this.damage);
     }
   }
 
