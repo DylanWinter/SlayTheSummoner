@@ -86,6 +86,11 @@ export class Player {
       Math.floor(location.z / map.tileSize) + Math.abs(map.bounds.max.z - map.bounds.min.z) / map.tileSize / 2);
   }
 
+  getCurrentMapNode(map) {
+    let index = this.convertToGridIndex(this.location, map);
+    return map.mapGraph.getAt(index.x, index.z);
+  }
+
 
   // --- Player stats manipulation methods --- //
 

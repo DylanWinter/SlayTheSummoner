@@ -1,5 +1,6 @@
 import { MapNode } from './MapNode.js';
 import { Player } from '../Characters/Player.js';
+import { MinHeap } from '../Utils/MinHeap.js'
 
 // Want to make it so the node that the player is in is "tagged", so the NPCs can use A* to path to this node
 // the NPCs will shoot at the player's coordinates
@@ -93,64 +94,60 @@ export class MapGraph {
     }
   }
 
-  // A* Pathfinding Implementation
-  aStar(startNode, targetNode) {
-    const openSet = []; // Nodes yet to be evaluated
-    const closedSet = new Set(); // Nodes already evaluated
-    const cameFrom = new Map(); // To reconstruct the path
+  // A* Pathfinding
+  aStar(start, end, heuristic) {
 
-    // Cost from start node to a given node
-    const gScore = new Map();
-    gScore.set(startNode, 0);
+    // Keep track of open nodes, costs, and parents
+    let open = new MinHeap();
+    let costs = new Map();
+    let parents = new Map();
 
-    // Estimated cost from a given node to the target node
-    const fScore = new Map();
-    fScore.set(startNode, this.heuristic(startNode, targetNode));
+    // Add the start node to our open, costs, and parents
+    open.enqueue(start, 0);
+    costs.set(start.id, 0);
+    parents.set(start.id, null);
 
-    openSet.push(startNode);
+    // While open still has nodes to traverse
+    while (!open.isEmpty()) {
 
-    while (openSet.length > 0) {
-      // Find node with the lowest fScore
-      let currentNode = this.getLowestFScoreNode(openSet, fScore);
+      // Get the lowest F cost node
+      let current = open.dequeue();
 
-      // If we reached the target, reconstruct the path
-      if (currentNode === targetNode) {
-        let path = [];
-        while (cameFrom.has(currentNode)) {
-          path.push(currentNode);
-          currentNode = cameFrom.get(currentNode);
-        }
-        path.reverse(); // We built the path from target to start, so reverse it
-        return path;
+      // If we've reached the end,
+      // we know this is the lowest cost
+      // Reconstruct the path
+      if (current === end) {
+        return this.backtrack(end, parents);
       }
 
-      // Move currentNode from openSet to closedSet
-      this.removeFromOpenSet(openSet, currentNode);
-      closedSet.add(currentNode);
+      // Look at current's neighbours
+      for (let edge of current.edges) {
+        
+        let neighbour = edge.node;
+        
+        // gCost is our original cost
+        let gCost = edge.cost + costs.get(current.id);
+        // hCost is our cost based on the heuristic
+        let hCost = this.heuristic(neighbour, end);
+        // fCost is combining the two
+        let fCost = gCost + hCost;
 
-      // Check neighbors of currentNode
-      let edges = currentNode.edges;
-      for (let i = 0; i < edges.length; i++) {
-        let neighbor = edges[i].node;
-        let cost = edges[i].cost;
+        // If costs does not have our neighbour OR
+        // It's cost is > than the current gCost
+        if (!costs.has(neighbour.id) || (costs.get(neighbour.id) > gCost)) {
+          // Add neighbour to our costs, parents, and open
+          costs.set(neighbour.id, gCost);
+          parents.set(neighbour.id, current);
 
-        if (closedSet.has(neighbor)) continue; // ignore already evaluated nodes
-
-        const tentativeGScore = gScore.get(currentNode) + cost
-
-        // If the neighbor is not in openSet or we found a better path
-        if (!openSet.includes(neighbor) || tentativeGScore < gScore.get(neighbor)) {
-          cameFrom.set(neighbor, currentNode);
-          gScore.set(neighbor, tentativeGScore);
-          fScore.set(neighbor, gScore.get(neighbor) + this.heuristic(neighbor, targetNode));
-
-          if (!openSet.includes(neighbor)) openSet.push(neighbor);
+          open.enqueue(neighbour, fCost);
         }
+
       }
+
     }
-
-    // Return an empty array if not path is found
+    // We haven't found a path
     return [];
+
   }
 
   // Heuristic function that calculates Euclidean distance
@@ -161,22 +158,23 @@ export class MapGraph {
     return Math.sqrt(dx * dx + dy * dy);
   }
 
-  // Helper function to get the node with the lowest fScore
-  getLowestFScoreNode(openSet, fScore) {
-    let lowestNode = openSet[0];
-    for (let i = 1; i < openSet.length; i++) {
-      if (fScore.get(openSet[i]) < fScore.get(lowestNode)) {
-        lowestNode = openSet[i];
-      }
+  // Method to use our parents Map
+  // to find a path to the specified end node
+  backtrack(end, parents) {
+    let path = [];
+    let current = end;
+    
+    if (!parents.has(end.id)) {
+      console.log("There is no path to the node: " + end.id);
+      return path;
     }
-    return lowestNode;
-  }
 
-  // Helper function to remove a node from the openSet
-  removeFromOpenSet(openSet, node) {
-    const index = openSet.indexOf(node);
-    if (index !== -1) {
-      openSet.splice(index, 1);
+    // Traverse backwards using our parent Map
+    while (current !== null) {
+      path.unshift(current);
+      current = parents.get(current.id);
     }
+
+    return path;
   }
 }

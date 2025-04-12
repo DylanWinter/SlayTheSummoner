@@ -1,3 +1,5 @@
+import * as THREE from 'three';
+
 export class MapNode {
 
     // Enum-like object
@@ -19,6 +21,11 @@ export class MapNode {
         if (this.type == MapNode.Type.Obstacle) {
             this.maxHealth = maxHealth;
         }
+    }
+
+    getCoordinates() {
+        let coords = new THREE.Vector3(this.i, 0, this.j);
+        return coords;
     }
   
 
