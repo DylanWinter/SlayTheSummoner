@@ -89,5 +89,10 @@ export class MapGraph {
     }
   }
 
+  getRandomGroundNode() {
+    let ground = this.nodes.filter(n => n.type === MapNode.Type.Ground);
+    return ground[Math.floor(Math.random() * ground.length)];
+  }
+
   
 }

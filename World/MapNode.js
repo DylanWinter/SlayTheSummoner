@@ -16,7 +16,7 @@ export class MapNode {
         this.type = type;
         this.edges = [];
 
-        if (this.type == MapNode.Type.Obstacle) {
+        if (this.type === MapNode.Type.Obstacle) {
             this.maxHealth = maxHealth;
         }
     }
@@ -38,7 +38,7 @@ export class MapNode {
 
     // Checks if the node can be traversed
     isTraversable() {
-        return this.type === MapNode.Type.Ground || this.type == MapNode.Type.Exit;
+        return this.type === MapNode.Type.Ground || this.type === MapNode.Type.Exit;
     }
 
 
@@ -50,14 +50,6 @@ export class MapNode {
 
     // Checks if the node is an exit
     isExit() {
-        return this.type == MapNode.Type.Exit;
-    }
-
-    // Placeholder method for proceeding to the next stage
-    // it will call whatever method generates the next stage if the node is an exit node
-    newStage() {
-        if (this.isExit()) {
-            return // the generation of the next stage will be called here
-        }
+        return this.type === MapNode.Type.Exit;
     }
   }

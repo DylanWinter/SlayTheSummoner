@@ -5,12 +5,12 @@ export class MapRenderer {
 
 
   // MapRenderer constructor
-  constructor(gameMap) {
+  constructor(gameMap, groundColor, obstacleColor) {
     this.gameMap = gameMap;
 
-    this.groundColor = new THREE.Color(0xDDDDDD);
-    this.obstacleColor = new THREE.Color(0x555555);
-   
+    this.groundColor = new THREE.Color(groundColor);
+    this.obstacleColor = new THREE.Color(obstacleColor);
+    this.exitColor = new THREE.Color(0x00FF00);
   }
 
 
@@ -20,11 +20,13 @@ export class MapRenderer {
 
     let groundMaterial = new THREE.MeshStandardMaterial({ color: this.groundColor, flatShading: true });
     let obstacleMaterial = new THREE.MeshStandardMaterial({ color: this.obstacleColor, flatShading: true });
+    let exitMaterial = new THREE.MeshStandardMaterial({ color: this.exitColor, flatShading: true });
   
     // Group nodes by type
     let nodes = this.gameMap.mapGraph.nodes;
     let groundNodes = nodes.filter(n => n.type === MapNode.Type.Ground);
     let obstacleNodes = nodes.filter(n => n.type === MapNode.Type.Obstacle);
+    let exitNodes = nodes.filter(n => n.type === MapNode.Type.Exit);
 
     // Create shared box geometry
     let tileGeometry = new THREE.BoxGeometry(
@@ -36,14 +38,16 @@ export class MapRenderer {
     // Create instanced meshes
     let groundMesh = new THREE.InstancedMesh(tileGeometry, groundMaterial, groundNodes.length);
     let obstacleMesh = new THREE.InstancedMesh(tileGeometry, obstacleMaterial, obstacleNodes.length);
+    let exitMesh = new THREE.InstancedMesh(tileGeometry, exitMaterial, exitNodes.length)
    
     // Create mesh transforms per type
     this.setMeshTransforms(groundMesh, groundNodes);
     this.setMeshTransforms(obstacleMesh, obstacleNodes);
+    this.setMeshTransforms(exitMesh, exitNodes);
   
     // Group everything
     let gameObject = new THREE.Group();
-    gameObject.add(groundMesh, obstacleMesh);
+    gameObject.add(groundMesh, obstacleMesh, exitMesh);
     return gameObject;
    
   }
