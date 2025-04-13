@@ -79,5 +79,59 @@ export class MapRenderer {
     }
   }
 
+  // To create non-ground tile geometries
+  addToTileGeometries(geometries, node) {
+
+    // Can change this.gameMap.based on tile type
+    let height = this.gameMap.tileSize;
+
+    // Create tile geometry
+    let geometry = this.createTileGeometry(node, height);
+
+    // Add to the specified geometry
+    geometries =
+      BufferGeometryUtils.mergeGeometries(
+        [geometries, geometry]
+      );
+    
+    // Return the updated geometries
+    return geometries;
+  }
+
+
+  // Create an individual tile geometry
+  createTileGeometry(node, height) {
+    // The coordinates of our top left edge of the tile
+    let x = this.gameMap.bounds.min.x + (node.i * this.gameMap.tileSize) + this.gameMap.tileSize/2;
+    let y = this.gameMap.tileSize/2;
+    let z = this.gameMap.bounds.min.z + (node.j * this.gameMap.tileSize) + this.gameMap.tileSize/2;
+    let position = new THREE.Vector3(x, y, z);
+    
+    // Set the geometry of our tile
+    let geometry = 
+      new THREE.BoxGeometry(
+        this.gameMap.tileSize, 
+        height,
+        this.gameMap.tileSize
+      );
+
+    // Translate our geomtery to the required position
+    geometry.translate(position);
+    geometry.translate(0, height/2, 0);
+
+    return geometry;
+  }
+
+
+  // Highlight a particular node/tile of a specified colour
+  highlight(node, color) {
+    
+    let geometry = this.createTileGeometry(node, 1)
+    let material = new THREE.MeshStandardMaterial({color: color});
+
+    return new THREE.Mesh(geometry, material);
+
+  }
+
 }
 

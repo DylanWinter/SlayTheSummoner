@@ -5,7 +5,7 @@ import {Projectile} from "./Projectile";
 import {Vector3} from "three";
 
 export class Player {
-  constructor() {
+  constructor(gameMap) {
     let coneGeo = new THREE.ConeGeometry(0.5, 1, 10);
     let coneMat = new THREE.MeshStandardMaterial({color: "blue"});
     let mesh = new THREE.Mesh(coneGeo, coneMat);
@@ -16,6 +16,12 @@ export class Player {
 
     this.location = new THREE.Vector3(0, 0, 0);
     this.raycaster = new THREE.Raycaster();
+
+    this.gameMap = gameMap; // links the gameMap to Player
+
+    this.changedNodes = true; // when true, NPCs that use A* will recalculate their path
+
+    this.currentNode = this.getCurrentMapNode(this.gameMap);
 
     // Player Stats
     this.moveSpeed = 25;
@@ -32,14 +38,14 @@ export class Player {
   }
 
   // Main function to handle player movement actions
-  update(keys, mouse, camera, deltaTime, map) {
-    this.handleMovement(keys, deltaTime, map);
+  update(keys, mouse, camera, deltaTime, gameMap) {
+    this.handleMovement(keys, deltaTime, gameMap);
     this.handleLook(mouse, camera);
     this.ui.update();
   }
 
   // Updates player movement based on keyboard input. Handles collisions.
-  handleMovement(keys, deltaTime, map) {
+  handleMovement(keys, deltaTime, gameMap) {
     let moveVector = new THREE.Vector3();
     if (keys.a) {
       moveVector.add(new THREE.Vector3(-1, 0, 0));
@@ -55,7 +61,7 @@ export class Player {
     }
     moveVector.setLength(this.moveSpeed * deltaTime);
     let newPos = VectorUtil.add(moveVector, this.location)
-    this.handleCollision(this.location, newPos, map, moveVector);
+    this.handleCollision(this.location, newPos, gameMap, moveVector);
     this.gameObject.position.copy(this.location);
   }
 
@@ -85,6 +91,7 @@ export class Player {
     }
   }
 
+
   fire(scene, projArray) {
     let direction = (new Vector3(Math.sin(this.gameObject.rotation.y),
       0,
@@ -92,8 +99,28 @@ export class Player {
     let proj = new Projectile(this.location, direction, this.projectileSpeed);
     scene.add(proj.gameObject);
     projArray.push(proj);
+
   }
 
+  getCurrentMapNode(gameMap) {
+    let index = this.convertToGridIndex(this.location, gameMap);
+    return gameMap.mapGraph.getAt(index.x, index.z);
+  }
+
+  checkNodeChange() {
+    let comparison = this.getCurrentMapNode(this.gameMap)
+
+    if (this.currentNode !== comparison) {
+      this.currentNode = comparison;
+      this.changedNodes = false;
+      console.log("Player has changed nodes");
+
+      return true;
+    }
+
+    else return false;
+    
+  }
 
   // --- Player stats manipulation methods --- //
 
@@ -128,7 +155,7 @@ export class Player {
   // Used for max health upgrades/downgrades
   changeMaxHealth(amount) {
     this.maxHealth += amount;
-    this.updateUI();
+    this.ui.updateUI();
   }
 
 

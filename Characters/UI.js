@@ -12,6 +12,7 @@ export class UI {
       document.body.appendChild(this.strengthTextElement);
       document.body.appendChild(this.bombCountTextElement);
 
+
       this.updateUI();
     }
 
@@ -66,6 +67,22 @@ export class UI {
       }
     
       textElement.style.top = `${this.lastElementTop}px`;
+
+      const box = document.createElement('div');
+
+      box.style.position = 'absolute';
+      box.style.left = '20px';
+      box.style.top  = `${this.lastElementTop}px`;
+      box.style.width = '90px';
+      box.style.height = '20px';
+      box.style.backgroundColor = 'white';
+      box.style.display = 'flex';
+      box.style.alignItems = 'center';
+      box.style.justifyContent = 'center';
+
+      // Appends the box for the text before the text is created
+      document.body.appendChild(box);
+
       this.lastElementTop += 30; // increments the top value for the next stat element
 
       return textElement;

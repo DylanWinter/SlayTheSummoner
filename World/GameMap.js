@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { MapGraph } from './MapGraph.js';
 import { MapRenderer } from './MapRenderer.js';
 import { CaveGenerator } from './CaveGenerator.js';
+import { Path } from './Path.js';
 
 export class GameMap {
 
@@ -43,6 +44,36 @@ export class GameMap {
     this.gameObject = this.mapRenderer.createRendering();
 
   }
+
+
+  // Returns the mapGraph instance variable
+  getMapGraph() {
+    return this.mapGraph;
+  }
+
+
+  // Method to path find with A*
+  pathFind(start, end) {
+    
+    // aStar returns a map based on nodes    
+    let nodePath = this.mapGraph.aStar(start, end, this.mapGraph.heuristic(start, end));
+
+    // Create a path that our character can understand
+    let path = new Path(this.tileSize/2);
+
+    // For each point in our nodePath, add a localized version to our path
+    for (let p of nodePath) {
+      //let highlightedObject = this.mapRenderer.highlight(p, 'yellow');
+      //this.gameObject.add(highlightedObject);
+
+      path.points.push(this.localize(p));
+    }
+    
+    // Return path (ensure this is not nodePath!)
+    return path;
+  
+  }
+
 
   // Method to get from node to world location
   localize(node) {
