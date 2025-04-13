@@ -39,7 +39,7 @@ export class BaseEnemy {
     
   }
 
-  
+
   // To update our enemy
   update(deltaTime, player, gameMap) {
     if (!this.isAlive) return; // enemy does not need to update if it's dead
@@ -77,17 +77,23 @@ export class BaseEnemy {
 
   }
 
-// Checks for collisions independently in x and z directions. If none found, updates location in that direction.
-handleCollision(currPos, newPos, map, deltaTime) {
-  let gridNewX = map.quantize(new Vector3(newPos.x, 0, currPos.z));
-  let gridNewZ = map.quantize(new Vector3(currPos.x, 0, newPos.z));
-  if (gridNewX.isTraversable()) {
-    this.location.x += this.velocity.x * deltaTime;
+  // Checks for collisions independently in x and z directions. If none found, updates location in that direction.
+  handleCollision(currPos, newPos, map, deltaTime) {
+    let gridNewX = map.quantize(new Vector3(newPos.x, 0, currPos.z));
+    let gridNewZ = map.quantize(new Vector3(currPos.x, 0, newPos.z));
+    if (gridNewX.isTraversable()) {
+      this.location.x += this.velocity.x * deltaTime;
+    }
+    if (gridNewZ.isTraversable()) {
+      this.location.z += this.velocity.z * deltaTime;
+    }
   }
-  if (gridNewZ.isTraversable()) {
-    this.location.z += this.velocity.z * deltaTime;
+
+  // Apply force to our character
+  applyForce(force) {
+    force.divideScalar(this.mass);
+    this.acceleration.add(force);
   }
-}
 
 
   // Stop our character
