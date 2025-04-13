@@ -65,7 +65,7 @@ function init() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  camera.position.y = 50;
+  camera.position.y = 75;
   camera.lookAt(player.gameObject.position);
 
   // Create Light
@@ -113,6 +113,8 @@ function loadNextLevel() {
     let newNode = levelManager.gameMap.mapGraph.getRandomGroundNode();
     player.location = levelManager.gameMap.localize(newNode);
   }
+  enemies = levelManager.instantiateEnemies();
+  levelManager.incrementNextLevel();
 }
 
 
@@ -133,7 +135,7 @@ function animate() {
   // Update player based on input
   player.update(keys, mouse, camera, deltaTime, levelManager.gameMap);
 
-  // Update each projectile
+  // Update projectiles
   projectiles.forEach((projectile) => {
     projectile.update(deltaTime, levelManager.gameMap, enemies);
     if (!projectile.isAlive) {
@@ -144,15 +146,8 @@ function animate() {
 
   // Update enemies
   enemies.forEach((enemy) => {
-    if (!enemy.isAlive) {
-      scene.remove(enemy.gameObject);
-    }
-    else {
-      enemy.update();
-    }
+      enemy.update(deltaTime);
   })
-  enemies.filter(enemy => enemy.isAlive);
-  enemies.filter(enemy => enemy.isAlive);
   enemies.filter(enemy => enemy.isAlive);
 
 

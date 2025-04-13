@@ -141,7 +141,7 @@ export class BaseEnemy {
 
   // Will be implemented when projectiles are finished
   shootAtPlayer(player){
-  
+ 
   }
 
   
@@ -155,7 +155,6 @@ export class BaseEnemy {
   die() {
     this.isAlive = false;
     this.gameObject.parent.remove(this.gameObject);
-    console.log("died");
   }
 
 }
