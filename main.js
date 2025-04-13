@@ -22,6 +22,10 @@ const clock = new THREE.Clock();
 let levelManager;
 
 let enemies = [];
+<<<<<<< HEAD
+=======
+let projectiles = [];
+>>>>>>> 09569f173d74eb506860fb025c031482a1ae5196
 
 let mapGraph;
 
@@ -55,7 +59,11 @@ window.addEventListener('mousemove', (event) => {
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 });
+<<<<<<< HEAD
 window.addEventListener('click', () => {player.fire(scene, levelManager.gameMap.projectiles)});
+=======
+window.addEventListener('click', () => {player.fire(scene, projectiles)});
+>>>>>>> 09569f173d74eb506860fb025c031482a1ae5196
 
 // Set up our scene
 function init() {
@@ -64,7 +72,11 @@ function init() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
+<<<<<<< HEAD
   camera.position.y = 55;
+=======
+  camera.position.y = 50;
+>>>>>>> 09569f173d74eb506860fb025c031482a1ae5196
   camera.lookAt(player.gameObject.position);
 
   // Create Light
@@ -72,7 +84,16 @@ function init() {
   directionalLight.position.set(0, 5, 5);
   scene.add(directionalLight);
 
+<<<<<<< HEAD
   levelManager = new LevelManager(scene);
+=======
+  
+  levelManager = new LevelManager(scene);
+  
+
+  player = new Player(gameMap);
+  enemy = new TurretEnemy();
+>>>>>>> 09569f173d74eb506860fb025c031482a1ae5196
 
   player.location.set(10, 0, 10);
   player.gameObject.position.copy(player.location); // Update visual position
@@ -85,8 +106,13 @@ function init() {
 }
 
 function loadNextLevel() {
+<<<<<<< HEAD
   levelManager.gameMap.projectiles.forEach((projectile) => {scene.remove(projectile.gameObject);});
   levelManager.gameMap.projectiles = [];
+=======
+  projectiles.forEach((projectile) => {scene.remove(projectile.gameObject);});
+  projectiles = [];
+>>>>>>> 09569f173d74eb506860fb025c031482a1ae5196
   enemies.forEach(enemy => {scene.remove(enemy.gameObject);});
   enemies = [];
   player.hasFoundExit = false;
@@ -95,8 +121,11 @@ function loadNextLevel() {
     let newNode = levelManager.gameMap.mapGraph.getRandomGroundNode();
     player.location = levelManager.gameMap.localize(newNode);
   }
+<<<<<<< HEAD
   enemies = levelManager.instantiateEnemies();
   levelManager.incrementNextLevel();
+=======
+>>>>>>> 09569f173d74eb506860fb025c031482a1ae5196
 }
 
 
@@ -117,13 +146,20 @@ function animate() {
   // Update player based on input
   player.update(keys, mouse, camera, deltaTime, levelManager.gameMap);
 
+<<<<<<< HEAD
   // Update projectiles
   levelManager.gameMap.projectiles.forEach((projectile) => {
     projectile.update(deltaTime, levelManager.gameMap, enemies, player);
+=======
+  // Update each projectile
+  projectiles.forEach((projectile) => {
+    projectile.update(deltaTime, levelManager.gameMap, enemies);
+>>>>>>> 09569f173d74eb506860fb025c031482a1ae5196
     if (!projectile.isAlive) {
       scene.remove(projectile.gameObject);
     }
   });
+<<<<<<< HEAD
   levelManager.gameMap.projectiles = levelManager.gameMap.projectiles.filter(projectile => projectile.isAlive);
 
   // Update enemies
@@ -131,6 +167,22 @@ function animate() {
     enemy.update(deltaTime, player, levelManager.gameMap);
   })
   enemies = enemies.filter(enemy => enemy.isAlive);
+=======
+  projectiles = projectiles.filter(projectile => projectile.isAlive);
+
+  // Update enemies
+  enemies.forEach((enemy) => {
+    if (!enemy.isAlive) {
+      scene.remove(enemy.gameObject);
+    }
+    else {
+      enemy.update();
+    }
+  })
+  enemies.filter(enemy => enemy.isAlive);
+  enemies.filter(enemy => enemy.isAlive);
+  enemies.filter(enemy => enemy.isAlive);
+>>>>>>> 09569f173d74eb506860fb025c031482a1ae5196
 
 
   // Move camera

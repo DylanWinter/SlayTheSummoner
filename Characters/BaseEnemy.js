@@ -142,6 +142,15 @@ export class BaseEnemy {
   }
 
 
+<<<<<<< HEAD
+=======
+  // Will be implemented when projectiles are finished
+  shootAtPlayer(player){
+  
+  }
+
+  
+>>>>>>> 09569f173d74eb506860fb025c031482a1ae5196
   takeDamage(amount) {
     this.health -= amount;
     if (this.health <= 0 && this.isAlive) {
