@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { BaseEnemy } from './BaseEnemy.js';
 import { State } from '../World/State.js';
+import {VectorUtil} from "../Utils/VectorUtil";
 
 
 export class ChasingEnemy extends BaseEnemy {
@@ -13,6 +14,7 @@ export class ChasingEnemy extends BaseEnemy {
         
         this.state = new PathingToPlayer();
         this.state.enterState(this);
+        this.useCollision = false;
 
     }
 
@@ -24,7 +26,33 @@ export class ChasingEnemy extends BaseEnemy {
 
     update(deltaTime, player, gameMap) {
         this.state.updateState(this, player, gameMap);
-        super.update(deltaTime);
+        // Update acceleration via velocity
+        this.velocity.addScaledVector(this.acceleration, deltaTime);
+        if (this.velocity.length() > this.topSpeed) {
+            this.velocity.setLength(this.topSpeed);
+        }
+
+
+        // Point in the direction of movement
+        if (this.velocity.length() > 0.1) {
+            let angle = Math.atan2(this.velocity.x, this.velocity.z);
+            this.gameObject.rotation.y = angle;
+        }
+
+        // Update velocity via location
+        if (this.useCollision) {
+            this.handleCollision(this.location,
+              VectorUtil.add(VectorUtil.multiplyScalar(this.velocity, deltaTime), this.location),
+              gameMap,
+              deltaTime)
+        }
+        else {
+            this.location.addScaledVector(this.velocity, deltaTime);
+        }
+
+        this.gameObject.position.copy(this.location);
+
+        this.acceleration.setLength(0);
     }
 
 }
@@ -37,6 +65,7 @@ export class PathingToPlayer extends State {
     }  
 
     updateState(enemy, player, gameMap) {
+        this.useCollision = false;
         let distance = enemy.location.distanceTo(player.location);
 
         // Changes to evade state if the enemy is too close to the player
@@ -54,8 +83,8 @@ export class PathingToPlayer extends State {
         //if (player.checkNodeChange()) {
 
         // Create a start and end for the path
-        let start = enemy.getCurrentMapNode(gameMap);
-        let end = player.getCurrentMapNode(gameMap);
+        let start = gameMap.quantize(enemy.location);
+        let end = gameMap.quantize(player.location);
 
         // Call path find on start to end
         let path = gameMap.pathFind(start, end);
@@ -75,6 +104,7 @@ export class EvadeFromPlayer extends State {
     }
 
     updateState(enemy, player, gameMap) {
+        enemy.useCollision = true;
         let distance = enemy.location.distanceTo(player.location);
 
         // Changes to A* pathfinding state if the enemy is too far away from the player

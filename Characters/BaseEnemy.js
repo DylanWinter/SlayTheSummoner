@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { VectorUtil } from '../Utils/VectorUtil.js';
 import { State } from '../World/State.js';
+import {Vector3} from "three";
 
  /**
  * 
@@ -58,9 +59,12 @@ export class BaseEnemy {
     }
 
     // Update velocity via location
-    this.location.addScaledVector(this.velocity, deltaTime);
-    
-    //this.handleCollision
+    this.handleCollision(this.location,
+      VectorUtil.add(VectorUtil.multiplyScalar(this.velocity, deltaTime), this.location),
+      gameMap,
+      deltaTime)
+    //this.location.addScaledVector(this.velocity, deltaTime);
+
     this.gameObject.position.copy(this.location);
 
     this.acceleration.setLength(0);
@@ -104,35 +108,17 @@ export class BaseEnemy {
   }
 
 // Checks for collisions independently in x and z directions. If none found, updates location in that direction.
-handleCollision(currPos, newPos, map, moveVector) {
-  let oldGridIndex = this.convertToGridIndex(currPos, map);
-  let newGridIndex = this.convertToGridIndex(newPos, map)
-  if (map.mapGraph.getAt(newGridIndex.x, oldGridIndex.z).isTraversable()) {
-    this.location.x += moveVector.x;
+handleCollision(currPos, newPos, map, deltaTime) {
+  let gridNewX = map.quantize(new Vector3(newPos.x, 0, currPos.z));
+  let gridNewZ = map.quantize(new Vector3(currPos.x, 0, newPos.z));
+  if (gridNewX.isTraversable()) {
+    this.location.x += this.velocity.x * deltaTime;
   }
-  if (map.mapGraph.getAt(oldGridIndex.x, newGridIndex.z).isTraversable()) {
-    this.location.z += moveVector.z;
+  if (gridNewZ.isTraversable()) {
+    this.location.z += this.velocity.z * deltaTime;
   }
 }
 
-// Converts a world space position into a usable MapGraph index
-convertToGridIndex(location, gameMap) {
-  return new THREE.Vector3(
-    Math.floor(location.x / gameMap.tileSize) + Math.abs(gameMap.bounds.max.x - gameMap.bounds.min.x) / gameMap.tileSize / 2,
-    location.y,
-    Math.floor(location.z / gameMap.tileSize) + Math.abs(gameMap.bounds.max.z - gameMap.bounds.min.z) / gameMap.tileSize / 2);
-  }
-
-  getCurrentMapNode(gameMap) {
-    let index = this.convertToGridIndex(this.location, gameMap);
-    return gameMap.mapGraph.getAt(index.x, index.z);
-  }
-
-  // Apply force to our character
-  applyForce(force) {
-    force.divideScalar(this.mass);
-    this.acceleration.add(force);
-  }
 
   // Stop our character
   stop() {
