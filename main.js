@@ -6,6 +6,7 @@ import { GameMap } from "./World/GameMap.js";
 import { MapGraph } from "./World/MapGraph.js";
 import { BaseEnemy } from './Characters/BaseEnemy.js';
 import { ChasingEnemy } from './Characters/ChasingEnemy.js';
+import { TurretEnemy } from './Characters/TurretEnemy.js';
 
 
 
@@ -82,7 +83,7 @@ function init() {
   scene.add(gameMap.gameObject);
 
   player = new Player(gameMap);
-  enemy = new ChasingEnemy();
+  enemy = new TurretEnemy();
 
   player.location.set(10, 0, 10);
   player.gameObject.position.copy(player.location); // Update visual position

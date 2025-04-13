@@ -8,15 +8,12 @@ export class ChasingEnemy extends BaseEnemy {
 
     constructor(player, gameMap) {
         super(player, gameMap);
-
-        //this.player = player;
-        //this.gameMap = gameMap;
-        
         this.state = new PathingToPlayer();
         this.state.enterState(this);
         this.useCollision = false;
 
     }
+
 
     switchState(state) {
         this.state = state;
@@ -64,6 +61,7 @@ export class PathingToPlayer extends State {
         console.log("PathingToPlayer");
     }  
 
+
     updateState(enemy, player, gameMap) {
         this.useCollision = false;
         let distance = enemy.location.distanceTo(player.location);
@@ -78,9 +76,8 @@ export class PathingToPlayer extends State {
             enemy.shootAtPlayer(player);
         }
 
-        // Checks if A* needs to be recalculated for pathing
-        // this will be implemented if calling A* on multiple NPCs is too taxing
-        //if (player.checkNodeChange()) {
+        // A* should be called in main to avoid inefficiency of every enemy calling it
+        // path will be passed to each NPC via update
 
         // Create a start and end for the path
         let start = gameMap.quantize(enemy.location);
@@ -91,7 +88,6 @@ export class PathingToPlayer extends State {
 
         let steer = enemy.simpleFollow(path);
         enemy.applyForce(steer);
-
     }
     
 }
@@ -103,13 +99,13 @@ export class EvadeFromPlayer extends State {
         console.log("EvadeFromPlayer");
     }
 
+
     updateState(enemy, player, gameMap) {
         enemy.useCollision = true;
         let distance = enemy.location.distanceTo(player.location);
 
         // Changes to A* pathfinding state if the enemy is too far away from the player
         if (distance > enemy.size * 15) {
-            //enemy.stop()
             enemy.switchState(new PathingToPlayer());
         }
 
@@ -118,10 +114,8 @@ export class EvadeFromPlayer extends State {
             enemy.shootAtPlayer(player);
         }
 
-
         let steer = enemy.flee(player.location);
         enemy.applyForce(steer);
-
     }
 
 }

@@ -13,10 +13,6 @@ export class BaseEnemy {
 
   constructor(player, gameMap) {
 
-    // Links the player and gameMap to the BaseEnemy
-    //this.player = player;
-    //this.gameMap = gameMap;
-
     // Creating a game object for our BaseEnemy
     let geo = new THREE.SphereGeometry(this.size);
     let mat = new THREE.MeshStandardMaterial({color: "blue"});
@@ -205,7 +201,7 @@ handleCollision(currPos, newPos, map, deltaTime) {
 
   // Will be implemented when projectiles are finished
   shootAtPlayer(player){
-    return
+    
   }
 
   takeDamage(amount) {
