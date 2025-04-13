@@ -92,6 +92,8 @@ function init() {
 
   scene.add(enemy.gameObject);
 
+  //enemy.takeDamage(3);
+
 
   // Create a start and end for our path
   //start = enemy.getCurrentMapNode(gameMap);

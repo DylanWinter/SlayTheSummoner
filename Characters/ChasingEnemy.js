@@ -22,7 +22,10 @@ export class ChasingEnemy extends BaseEnemy {
 
 
     update(deltaTime, player, gameMap) {
+
+        super.update(deltaTime, player, gameMap);
         this.state.updateState(this, player, gameMap);
+
         // Update acceleration via velocity
         this.velocity.addScaledVector(this.acceleration, deltaTime);
         if (this.velocity.length() > this.topSpeed) {

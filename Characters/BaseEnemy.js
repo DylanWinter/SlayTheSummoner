@@ -39,38 +39,12 @@ export class BaseEnemy {
     
   }
 
+  
   // To update our enemy
   update(deltaTime, player, gameMap) {
-    // Update acceleration via velocity
-    this.velocity.addScaledVector(this.acceleration, deltaTime);
-    if (this.velocity.length() > this.topSpeed) {
-      this.velocity.setLength(this.topSpeed);
-    }
-  
-
-    // Point in the direction of movement
-    if (this.velocity.length() > 0.1) {
-      let angle = Math.atan2(this.velocity.x, this.velocity.z);
-      this.gameObject.rotation.y = angle;
-    }
-
-    // Update velocity via location
-    this.handleCollision(this.location,
-      VectorUtil.add(VectorUtil.multiplyScalar(this.velocity, deltaTime), this.location),
-      gameMap,
-      deltaTime)
-    //this.location.addScaledVector(this.velocity, deltaTime);
-
-    this.gameObject.position.copy(this.location);
-
-    this.acceleration.setLength(0);
+    if (!this.isAlive) return; // enemy does not need to update if it's dead
   }
 
-  // Apply force to our enemy
-  applyForce(force) {
-    force.divideScalar(this.mass);
-    this.acceleration.add(force);
-  }
 
   // Creates the path to the player with the aStar method,
   // then returns the coordinates of the next node in the path
@@ -213,6 +187,9 @@ handleCollision(currPos, newPos, map, deltaTime) {
 
   die() {
     this.isAlive = false;
+
+    this.gameObject.parent.remove(this.gameObject);
+    console.log("died");
   }
 
 }

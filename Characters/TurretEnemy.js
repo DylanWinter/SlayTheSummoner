@@ -22,9 +22,9 @@ export class TurretEnemy extends BaseEnemy {
 
 
     update(deltaTime, player, gameMap) {
+        super.update(deltaTime, player, gameMap);
         this.state.updateState(this, player, gameMap);
     }
-
 
 }
 
