@@ -26,6 +26,10 @@ export class TurretEnemy extends BaseEnemy {
         this.state.updateState(this, player, gameMap);
     }
 
+    shootAtPlayer(player, gameMap) {
+
+    }
+
 }
 
 

@@ -3,19 +3,15 @@ import { VectorUtil } from '../Utils/VectorUtil.js';
 import { State } from '../World/State.js';
 import {Vector3} from "three";
 
- /**
- * 
- * The BaseEnemy class will be used for:
- * NPC movement
- *
- **/
+
 export class BaseEnemy {
 
-  constructor(player, gameMap) {
+  constructor() {
+    this.size = 1;
 
     // Creating a game object for our BaseEnemy
     let geo = new THREE.SphereGeometry(this.size);
-    let mat = new THREE.MeshStandardMaterial({color: "blue"});
+    let mat = new THREE.MeshStandardMaterial({color: "red"});
     let mesh = new THREE.Mesh(geo, mat);
     mesh.rotation.x = Math.PI/2;
 
@@ -42,7 +38,10 @@ export class BaseEnemy {
 
   // To update our enemy
   update(deltaTime, player, gameMap) {
-    if (!this.isAlive) return; // enemy does not need to update if it's dead
+    if (!this.isAlive) {
+      return;
+    }
+    this.gameObject.position.copy(this.location);
   }
 
 
@@ -143,59 +142,17 @@ export class BaseEnemy {
   }
 
 
-  // Arrive steering behaviour
-  arrive(target, radius) {
-
-    let desired = new THREE.Vector3();
-    desired.subVectors(target, this.location);
-
-    let distance = desired.length();
-
-    // If we are close enough to
-    // the target, stop
-    if (distance < 0.1) {
-      this.stop();
-    
-    // Slow down if we are within
-    // a specified radius to the target
-    } else if (distance < radius) {
-      let speed = (distance/radius) * this.topSpeed;
-      desired.setLength(speed);
-    
-    // Otherwise, proceed as seek
-    } else {
-      desired.setLength(this.topSpeed);
-    
-    }
-
-    // Apply our steering formula
-    let steer = new THREE.Vector3();
-    steer.subVectors(desired, this.velocity);
-
-    if (steer.length() > this.maxForce) {
-      steer.setLength(this.maxForce);
-    }
-
-    return steer;
-  }
-
-  // Will be implemented when projectiles are finished
-  shootAtPlayer(player){
-    
-  }
-
   takeDamage(amount) {
     this.health -= amount;
-    if (this.health <= 0) {
+    if (this.health <= 0 && this.isAlive) {
       this.die();
     }
   }
 
   die() {
     this.isAlive = false;
-
     this.gameObject.parent.remove(this.gameObject);
-    console.log("died");
+    console.log("Enemy killed");
   }
 
 }

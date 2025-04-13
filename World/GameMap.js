@@ -7,8 +7,10 @@ import { Path } from './Path.js';
 export class GameMap {
 
   // Constructor for our GameMap class
-  constructor() {
-  
+  constructor(groundColor=0xDDDDDD, obstacleColor=0x555555) {
+
+    this.projectiles = [];
+
     // Initialize bounds in here!
     this.bounds = new THREE.Box3(
       new THREE.Vector3(-150,0,-100), // scene min
@@ -38,12 +40,13 @@ export class GameMap {
 
 
     // Create our map renderer
-    this.mapRenderer = new MapRenderer(this);
+    this.mapRenderer = new MapRenderer(this, groundColor, obstacleColor);
 
     // Create our game object
     this.gameObject = this.mapRenderer.createRendering();
 
   }
+
 
   // Returns the mapGraph instance variable
   getMapGraph() {
@@ -77,7 +80,7 @@ export class GameMap {
   // Method to get from node to world location
   localize(node) {
     let x = this.bounds.min.x + (node.i * this.tileSize) + this.tileSize/2;
-    let y = this.tileSize;
+    let y = 0;
     let z = this.bounds.min.z + (node.j * this.tileSize) + this.tileSize/2;
     return new THREE.Vector3(x, y, z);
   }
@@ -89,7 +92,5 @@ export class GameMap {
 
     return this.mapGraph.getAt(nodeI, nodeJ);
   }
-
-  
 
 }

@@ -94,6 +94,7 @@ export class MapGraph {
     }
   }
 
+
   // A* Pathfinding
   aStar(start, end) {
 
@@ -177,4 +178,11 @@ export class MapGraph {
 
     return path;
   }
+
+  getRandomGroundNode() {
+    let ground = this.nodes.filter(n => n.type === MapNode.Type.Ground);
+    return ground[Math.floor(Math.random() * ground.length)];
+  }
+
+  
 }

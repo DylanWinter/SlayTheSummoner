@@ -1,9 +1,11 @@
 import * as THREE from 'three';
 import { VectorUtil } from '../Utils/VectorUtil.js';
 import { UI } from './UI.js';
+import {Projectile} from "./Projectile";
+import {Vector3} from "three";
 
 export class Player {
-  constructor(gameMap) {
+  constructor() {
     let coneGeo = new THREE.ConeGeometry(0.5, 1, 10);
     let coneMat = new THREE.MeshStandardMaterial({color: "blue"});
     let mesh = new THREE.Mesh(coneGeo, coneMat);
@@ -15,19 +17,18 @@ export class Player {
     this.location = new THREE.Vector3(0, 0, 0);
     this.raycaster = new THREE.Raycaster();
 
-    this.gameMap = gameMap; // links the gameMap to Player
-
     this.changedNodes = true; // when true, NPCs that use A* will recalculate their path
 
-    this.currentNode = this.getCurrentMapNode(this.gameMap);
-
     // Player Stats
-    this.moveSpeed = 15;
-    this.maxHealth = 100;
+    this.moveSpeed = 25;
+    this.maxHealth = 3;
     this.health = this.maxHealth;
     this.strength = 1; // determines damage per attack
     this.bombs = 3;
     this.isAlive = true;
+    this.hasFoundExit = false;
+    this.projectileSpeed = 40;
+    this.hitboxSize = 0.75;
 
     // Creates UI and links it to the player
     this.ui = new UI(this);
@@ -73,32 +74,34 @@ export class Player {
   }
 
   // Checks for collisions independently in x and z directions. If none found, updates location in that direction.
-  handleCollision(currPos, newPos, gameMap, moveVector) {
-    let oldGridIndex = this.convertToGridIndex(currPos, gameMap);
-    let newGridIndex = this.convertToGridIndex(newPos, gameMap)
-    if (gameMap.mapGraph.getAt(newGridIndex.x, oldGridIndex.z).isTraversable()) {
+  handleCollision(currPos, newPos, map, moveVector) {
+    let gridNewX = map.quantize(new Vector3(newPos.x, 0, currPos.z));
+    let gridNewZ = map.quantize(new Vector3(currPos.x, 0, newPos.z));
+    if (gridNewX.isTraversable()) {
       this.location.x += moveVector.x;
     }
-    if (gameMap.mapGraph.getAt(oldGridIndex.x, newGridIndex.z).isTraversable()) {
+    if (gridNewZ.isTraversable()) {
       this.location.z += moveVector.z;
+    }
+    if (map.quantize(new Vector3(this.location.x, 0, this.location.z)).isExit()) {
+      this.hasFoundExit = true;
     }
   }
 
-  // Converts a world space position into a usable MapGraph index
-  convertToGridIndex(location, gameMap) {
-    return new THREE.Vector3(
-      Math.floor(location.x / gameMap.tileSize) + Math.abs(gameMap.bounds.max.x - gameMap.bounds.min.x) / gameMap.tileSize / 2,
-      location.y,
-      Math.floor(location.z / gameMap.tileSize) + Math.abs(gameMap.bounds.max.z - gameMap.bounds.min.z) / gameMap.tileSize / 2);
+
+  fire(scene, projArray) {
+    let direction = (new Vector3(Math.sin(this.gameObject.rotation.y),
+      0,
+      Math.cos(this.gameObject.rotation.y))).normalize();
+    let proj = new Projectile(this.location, direction, this.projectileSpeed);
+    scene.add(proj.gameObject);
+    projArray.push(proj);
+
   }
 
-  getCurrentMapNode(gameMap) {
-    let index = this.convertToGridIndex(this.location, gameMap);
-    return gameMap.mapGraph.getAt(index.x, index.z);
-  }
 
-  checkNodeChange() {
-    let comparison = this.getCurrentMapNode(this.gameMap)
+  checkNodeChange(gameMap) {
+    let comparison = gameMap.quantize(this.location);
 
     if (this.currentNode !== comparison) {
       this.currentNode = comparison;
