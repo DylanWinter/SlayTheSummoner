@@ -6,7 +6,7 @@ import { CaveGenerator } from './CaveGenerator.js';
 export class GameMap {
 
   // Constructor for our GameMap class
-  constructor() {
+  constructor(groundColor=0xDDDDDD, obstacleColor=0x555555) {
   
     // Initialize bounds in here!
     this.bounds = new THREE.Box3(
@@ -37,15 +37,12 @@ export class GameMap {
 
 
     // Create our map renderer
-    this.mapRenderer = new MapRenderer(this);
+    this.mapRenderer = new MapRenderer(this, groundColor, obstacleColor);
 
     // Create our game object
     this.gameObject = this.mapRenderer.createRendering();
 
   }
-
-
-
 
   // Method to get from node to world location
   localize(node) {
@@ -62,7 +59,5 @@ export class GameMap {
 
     return this.mapGraph.getAt(nodeI, nodeJ);
   }
-
-  
 
 }

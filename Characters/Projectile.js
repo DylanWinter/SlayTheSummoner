@@ -33,9 +33,9 @@ export class Projectile {
 
   // Checks for collisions independently in x and z directions. If none found, updates location in that direction.
   handleCollision(pos, map) {
-    let gridIndex = this.convertToGridIndex(pos, map);
+    let gridPos = map.quantize(pos);
     try {
-      if (!map.mapGraph.getAt(gridIndex.x, gridIndex.z).isTraversable()) {
+      if (!gridPos.isTraversable()) {
         this.isAlive = false;
       }
     }
@@ -53,11 +53,4 @@ export class Projectile {
     }
   }
 
-  // Converts a world space position into a usable MapGraph index
-  convertToGridIndex(location, map) {
-    return new THREE.Vector3(
-      Math.floor(location.x / map.tileSize) + Math.abs(map.bounds.max.x - map.bounds.min.x) / map.tileSize / 2,
-      location.y,
-      Math.floor(location.z / map.tileSize) + Math.abs(map.bounds.max.z - map.bounds.min.z) / map.tileSize / 2);
-  }
 }
