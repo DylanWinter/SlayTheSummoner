@@ -1,5 +1,10 @@
 import { MapNode } from './MapNode.js';
+import { Player } from '../Characters/Player.js';
+import { MinHeap } from '../Utils/MinHeap.js'
 
+// Want to make it so the node that the player is in is "tagged", so the NPCs can use A* to path to this node
+// the NPCs will shoot at the player's coordinates
+// use convertToGridIndex for coordinates, pass the x and z coordinates into MapGraph's getAt(i, j) method
 
 export class MapGraph {
   
@@ -87,6 +92,91 @@ export class MapGraph {
         }
       }
     }
+  }
+
+
+  // A* Pathfinding
+  aStar(start, end) {
+
+    // Keep track of open nodes, costs, and parents
+    let open = new MinHeap();
+    let costs = new Map();
+    let parents = new Map();
+
+    // Add the start node to our open, costs, and parents
+    open.enqueue(start, 0);
+    costs.set(start.id, 0);
+    parents.set(start.id, null);
+
+    // While open still has nodes to traverse
+    while (!open.isEmpty()) {
+
+      // Get the lowest F cost node
+      let current = open.dequeue();
+
+      // If we've reached the end,
+      // we know this is the lowest cost
+      // Reconstruct the path
+      if (current === end) {
+        return this.backtrack(end, parents);
+      }
+
+      // Look at current's neighbours
+      for (let edge of current.edges) {
+        
+        let neighbour = edge.node;
+        
+        // gCost is our original cost
+        let gCost = edge.cost + costs.get(current.id);
+        // hCost is our cost based on the heuristic
+        let hCost = this.heuristic(neighbour, end);
+        // fCost is combining the two
+        let fCost = gCost + hCost;
+
+        // If costs does not have our neighbour OR
+        // It's cost is > than the current gCost
+        if (!costs.has(neighbour.id) || (costs.get(neighbour.id) > gCost)) {
+          // Add neighbour to our costs, parents, and open
+          costs.set(neighbour.id, gCost);
+          parents.set(neighbour.id, current);
+
+          open.enqueue(neighbour, fCost);
+        }
+
+      }
+
+    }
+    // We haven't found a path
+    return [];
+
+  }
+
+  // Heuristic function that calculates Euclidean distance
+  heuristic(node, targetNode) {
+    const dx = Math.abs(node.i - targetNode.i);
+    const dz = Math.abs(node.j - targetNode.j);
+
+    return Math.sqrt(dx * dx + dz * dz);
+  }
+
+  // Method to use our parents Map
+  // to find a path to the specified end node
+  backtrack(end, parents) {
+    let path = [];
+    let current = end;
+    
+    if (!parents.has(end.id)) {
+      console.log("There is no path to the node: " + end.id);
+      return path;
+    }
+
+    // Traverse backwards using our parent Map
+    while (current !== null) {
+      path.unshift(current);
+      current = parents.get(current.id);
+    }
+
+    return path;
   }
 
   getRandomGroundNode() {
