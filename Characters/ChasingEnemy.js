@@ -2,16 +2,21 @@ import * as THREE from 'three';
 import { BaseEnemy } from './BaseEnemy.js';
 import { State } from '../World/State.js';
 import {VectorUtil} from "../Utils/VectorUtil";
+import {Vector3} from "three";
+import {Projectile} from "./Projectile";
 
 
 export class ChasingEnemy extends BaseEnemy {
 
-    constructor(player, gameMap) {
-        super(player, gameMap);
+    constructor() {
+        super();
         this.state = new PathingToPlayer();
         this.state.enterState(this);
         this.useCollision = false;
+        this.projectileSpeed = 25;
 
+        this.fireCooldown = 1;
+        this.fireTimer = this.fireCooldown;
     }
 
 
@@ -22,9 +27,8 @@ export class ChasingEnemy extends BaseEnemy {
 
 
     update(deltaTime, player, gameMap) {
-
         super.update(deltaTime, player, gameMap);
-        this.state.updateState(this, player, gameMap);
+        this.state.updateState(this, player, gameMap, deltaTime);
 
         // Update acceleration via velocity
         this.velocity.addScaledVector(this.acceleration, deltaTime);
@@ -39,13 +43,14 @@ export class ChasingEnemy extends BaseEnemy {
             this.gameObject.rotation.y = angle;
         }
 
-        // Update velocity via location
+        // For fleeing
         if (this.useCollision) {
             this.handleCollision(this.location,
               VectorUtil.add(VectorUtil.multiplyScalar(this.velocity, deltaTime), this.location),
               gameMap,
               deltaTime)
         }
+        // For pathfinding
         else {
             this.location.addScaledVector(this.velocity, deltaTime);
         }
@@ -55,6 +60,12 @@ export class ChasingEnemy extends BaseEnemy {
         this.acceleration.setLength(0);
     }
 
+    shootAtPlayer(player, gameMap){
+        let direction = VectorUtil.sub(player.location, this.location).normalize();
+        let proj = new Projectile(this.location, direction, this.projectileSpeed, false);
+        gameMap.gameObject.parent.add(proj.gameObject);
+        gameMap.projectiles.push(proj);
+    }
 }
 
 
@@ -65,18 +76,24 @@ export class PathingToPlayer extends State {
     }  
 
 
-    updateState(enemy, player, gameMap) {
+    updateState(enemy, player, gameMap, deltaTime) {
         this.useCollision = false;
         let distance = enemy.location.distanceTo(player.location);
 
         // Changes to evade state if the enemy is too close to the player
-        if (distance < enemy.size * 5) {
+        if (distance < enemy.size * 12) {
             enemy.switchState(new EvadeFromPlayer());
         }
 
         // Shoot at the enemy if they are within a certain distance
         if (distance < enemy.size * 25) {
-            enemy.shootAtPlayer(player);
+            if (enemy.fireTimer <= 0) {
+                enemy.shootAtPlayer(player, gameMap);
+                enemy.fireTimer = enemy.fireCooldown;
+            }
+            else {
+                enemy.fireTimer -= deltaTime;
+            }
         }
 
         // A* should be called in main to avoid inefficiency of every enemy calling it
@@ -103,7 +120,7 @@ export class EvadeFromPlayer extends State {
     }
 
 
-    updateState(enemy, player, gameMap) {
+    updateState(enemy, player, gameMap, deltaTime) {
         enemy.useCollision = true;
         let distance = enemy.location.distanceTo(player.location);
 
@@ -114,7 +131,13 @@ export class EvadeFromPlayer extends State {
 
         // Shoot at the enemy if they are within a certain distance
         if (distance < enemy.size * 25) {
-            enemy.shootAtPlayer(player);
+            if (enemy.fireTimer <= 0) {
+                enemy.shootAtPlayer(player, gameMap);
+                enemy.fireTimer = enemy.fireCooldown;
+            }
+            else {
+                enemy.fireTimer -= deltaTime;
+            }
         }
 
         let steer = enemy.flee(player.location);

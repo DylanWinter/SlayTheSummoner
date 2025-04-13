@@ -142,15 +142,9 @@ export class BaseEnemy {
   }
 
 
-  // Will be implemented when projectiles are finished
-  shootAtPlayer(player){
- 
-  }
-
-  
   takeDamage(amount) {
     this.health -= amount;
-    if (this.health <= 0) {
+    if (this.health <= 0 && this.isAlive) {
       this.die();
     }
   }
@@ -158,6 +152,7 @@ export class BaseEnemy {
   die() {
     this.isAlive = false;
     this.gameObject.parent.remove(this.gameObject);
+    console.log("Enemy killed");
   }
 
 }

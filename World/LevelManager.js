@@ -2,6 +2,8 @@ import * as THREE from 'three';
 import { VectorUtil } from '../Utils/VectorUtil.js';
 import { GameMap } from "./GameMap";
 import {BaseEnemy} from "../Characters/BaseEnemy";
+import {ChasingEnemy} from "../Characters/ChasingEnemy";
+import {TurretEnemy} from "../Characters/TurretEnemy";
 
 
 export class LevelManager {
@@ -11,7 +13,7 @@ export class LevelManager {
     this.nextLevel = 0;
 
     this.levels = [
-      {type: 'default', groundColor: 0xDDDDDD, obstacleColor: 0x555555, enemies: ['base']},
+      {type: 'default', groundColor: 0xDDDDDD, obstacleColor: 0x555555, enemies: ['chasing']},
       {type: 'default', groundColor: 0x4169e1, obstacleColor: 0xDC143C},
       {type: 'default', groundColor: 0xDDDDDD, obstacleColor: 0x555555},
       {type: 'boss', groundColor: 0xDDDDDD, obstacleColor: 0x555555},
@@ -38,8 +40,20 @@ export class LevelManager {
       let spawn = this.gameMap.mapGraph.getRandomGroundNode();
       let enemy;
 
-      if (enemyType === 'base') {
-        enemy = new BaseEnemy();
+      switch (enemyType)
+      {
+        case 'base':
+          enemy = new BaseEnemy();
+          break;
+        case 'chasing':
+          enemy = new ChasingEnemy();
+          break;
+        case 'turret':
+          enemy = new TurretEnemy();
+          break;
+        default:
+          console.log("Invalid enemy type in instantiateEnemies:", enemyType);
+          break;
       }
 
       enemy.location = (this.gameMap.localize(spawn));

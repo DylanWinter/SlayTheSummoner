@@ -21,13 +21,14 @@ export class Player {
 
     // Player Stats
     this.moveSpeed = 25;
-    this.maxHealth = 100;
+    this.maxHealth = 3;
     this.health = this.maxHealth;
     this.strength = 1; // determines damage per attack
     this.bombs = 3;
     this.isAlive = true;
     this.hasFoundExit = false;
     this.projectileSpeed = 40;
+    this.hitboxSize = 0.75;
 
     // Creates UI and links it to the player
     this.ui = new UI(this);

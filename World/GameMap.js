@@ -8,7 +8,9 @@ export class GameMap {
 
   // Constructor for our GameMap class
   constructor(groundColor=0xDDDDDD, obstacleColor=0x555555) {
-  
+
+    this.projectiles = [];
+
     // Initialize bounds in here!
     this.bounds = new THREE.Box3(
       new THREE.Vector3(-150,0,-100), // scene min
