@@ -34,8 +34,12 @@ export class CaveGenerator {
       this.graph.createNodes(grid);
       this.graph.createEdges();
 
-      if (this.validate()) return;
-    
+      if (this.validate()) {
+        let ground = this.graph.nodes.filter(n => n.type === MapNode.Type.Ground);
+        let randomNode = ground[Math.floor(Math.random() * ground.length)];
+        randomNode.type = MapNode.Type.Exit;
+        return;
+      }
     }
   }
 

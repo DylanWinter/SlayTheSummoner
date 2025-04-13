@@ -7,6 +7,8 @@ import { MapGraph } from "./World/MapGraph.js";
 import { BaseEnemy } from './Characters/BaseEnemy.js';
 import { ChasingEnemy } from './Characters/ChasingEnemy.js';
 import { TurretEnemy } from './Characters/TurretEnemy.js';
+import {LevelManager} from "./World/LevelManager";
+import {MapNode} from "./World/MapNode";
 
 
 
@@ -16,10 +18,11 @@ const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHei
 const renderer = new THREE.WebGLRenderer();
 // Create clock
 const clock = new THREE.Clock();
-// Declare bounds
-let bounds;
 // Create map
-let gameMap;
+let levelManager;
+
+let enemies = [];
+let projectiles = [];
 
 let mapGraph;
 
@@ -53,6 +56,7 @@ window.addEventListener('mousemove', (event) => {
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 });
+window.addEventListener('click', () => {player.fire(scene, projectiles)});
 
 // Set up our scene
 function init() {
@@ -61,26 +65,17 @@ function init() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  camera.position.y = 40;
-  camera.lookAt(0,0,0);
+  camera.position.y = 50;
+  camera.lookAt(player.gameObject.position);
 
   // Create Light
   let directionalLight = new THREE.DirectionalLight(0xffffff, 2);
   directionalLight.position.set(0, 5, 5);
   scene.add(directionalLight);
 
-  // Initialize bounds
-  bounds = new THREE.Box3(
-    new THREE.Vector3(-20,0,-20), // scene min
-    new THREE.Vector3(20,0,20) // scene max
-  );
-
-  gameMap = new GameMap();
-
-  mapGraph = gameMap.getMapGraph()
-
-
-  scene.add(gameMap.gameObject);
+  
+  levelManager = new LevelManager(scene);
+  
 
   player = new Player(gameMap);
   enemy = new TurretEnemy();
@@ -103,18 +98,65 @@ function init() {
   //path = gameMap.pathFind(start, end);
 
   // First call to animate
+  loadNextLevel();
   animate();
+}
+
+function loadNextLevel() {
+  projectiles.forEach((projectile) => {scene.remove(projectile.gameObject);});
+  projectiles = [];
+  enemies.forEach(enemy => {scene.remove(enemy.gameObject);});
+  enemies = [];
+  player.hasFoundExit = false;
+  levelManager.loadNextLevel();
+  if (!levelManager.gameMap.quantize(player.location).isTraversable()) {
+    let newNode = levelManager.gameMap.mapGraph.getRandomGroundNode();
+    player.location = levelManager.gameMap.localize(newNode);
+  }
 }
 
 
 // animate loop
 function animate() {
+
+  // Load next level when exit is found
+  if (player.hasFoundExit) {
+    loadNextLevel();
+  }
+
   requestAnimationFrame(animate);
   renderer.render(scene, camera);
 
   // Change in time
   let deltaTime = clock.getDelta();
-  player.update(keys, mouse, camera, deltaTime, gameMap);
+
+  // Update player based on input
+  player.update(keys, mouse, camera, deltaTime, levelManager.gameMap);
+
+  // Update each projectile
+  projectiles.forEach((projectile) => {
+    projectile.update(deltaTime, levelManager.gameMap, enemies);
+    if (!projectile.isAlive) {
+      scene.remove(projectile.gameObject);
+    }
+  });
+  projectiles = projectiles.filter(projectile => projectile.isAlive);
+
+  // Update enemies
+  enemies.forEach((enemy) => {
+    if (!enemy.isAlive) {
+      scene.remove(enemy.gameObject);
+    }
+    else {
+      enemy.update();
+    }
+  })
+  enemies.filter(enemy => enemy.isAlive);
+  enemies.filter(enemy => enemy.isAlive);
+  enemies.filter(enemy => enemy.isAlive);
+
+
+  // Move camera
   camera.position.x = player.gameObject.position.x;
   camera.position.z = player.gameObject.position.z;
 

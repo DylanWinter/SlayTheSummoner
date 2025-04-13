@@ -7,7 +7,7 @@ import { Path } from './Path.js';
 export class GameMap {
 
   // Constructor for our GameMap class
-  constructor() {
+  constructor(groundColor=0xDDDDDD, obstacleColor=0x555555) {
   
     // Initialize bounds in here!
     this.bounds = new THREE.Box3(
@@ -38,12 +38,13 @@ export class GameMap {
 
 
     // Create our map renderer
-    this.mapRenderer = new MapRenderer(this);
+    this.mapRenderer = new MapRenderer(this, groundColor, obstacleColor);
 
     // Create our game object
     this.gameObject = this.mapRenderer.createRendering();
 
   }
+
 
   // Returns the mapGraph instance variable
   getMapGraph() {
@@ -89,7 +90,5 @@ export class GameMap {
 
     return this.mapGraph.getAt(nodeI, nodeJ);
   }
-
-  
 
 }
