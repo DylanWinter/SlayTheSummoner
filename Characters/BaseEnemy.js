@@ -38,7 +38,10 @@ export class BaseEnemy {
 
   // To update our enemy
   update(deltaTime, player, gameMap) {
-    if (!this.isAlive) return; // enemy does not need to update if it's dead
+    if (!this.isAlive) {
+      return;
+    }
+    this.gameObject.position.copy(this.location);
   }
 
 

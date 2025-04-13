@@ -46,6 +46,7 @@ export class Projectile {
   }
 
   handleEnemyCollision(enemy) {
+    console.log(this.location.x, enemy.gameObject.position.x)
     if (this.location.distanceTo(enemy.location) < enemy.size && this.isAlive)
     {
       this.isAlive = false;

@@ -27,7 +27,7 @@ let projectiles = [];
 let mapGraph;
 
 // Create player
-let player;
+let player = new Player();
 
 // Test NPC
 let enemy;
@@ -73,29 +73,14 @@ function init() {
   directionalLight.position.set(0, 5, 5);
   scene.add(directionalLight);
 
-  
-  levelManager = new LevelManager(scene);
-  
 
-  player = new Player(gameMap);
-  enemy = new TurretEnemy();
+  levelManager = new LevelManager(scene);
 
   player.location.set(10, 0, 10);
   player.gameObject.position.copy(player.location); // Update visual position
 
   scene.add(player.gameObject)
 
-  scene.add(enemy.gameObject);
-
-  //enemy.takeDamage(3);
-
-
-  // Create a start and end for our path
-  //start = enemy.getCurrentMapNode(gameMap);
-  //end = player.getCurrentMapNode(gameMap);
-
-  // Call path find on start to end
-  //path = gameMap.pathFind(start, end);
 
   // First call to animate
   loadNextLevel();
@@ -146,7 +131,7 @@ function animate() {
 
   // Update enemies
   enemies.forEach((enemy) => {
-      enemy.update(deltaTime);
+    enemy.update(deltaTime, player, levelManager.gameMap);
   })
   enemies.filter(enemy => enemy.isAlive);
 
@@ -155,15 +140,7 @@ function animate() {
   camera.position.x = player.gameObject.position.x;
   camera.position.z = player.gameObject.position.z;
 
-  //start = enemy.getCurrentMapNode(gameMap);
-  //end = player.getCurrentMapNode(gameMap);
-  //path = gameMap.pathFind(start, end);
 
-  //let steer = enemy.simpleFollow(path);
-
-  //enemy.applyForce(steer);
-
-  enemy.update(deltaTime, player, gameMap);
 }
 
 init();

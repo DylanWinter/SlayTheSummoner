@@ -5,7 +5,7 @@ import {Projectile} from "./Projectile";
 import {Vector3} from "three";
 
 export class Player {
-  constructor(gameMap) {
+  constructor() {
     let coneGeo = new THREE.ConeGeometry(0.5, 1, 10);
     let coneMat = new THREE.MeshStandardMaterial({color: "blue"});
     let mesh = new THREE.Mesh(coneGeo, coneMat);
@@ -17,11 +17,7 @@ export class Player {
     this.location = new THREE.Vector3(0, 0, 0);
     this.raycaster = new THREE.Raycaster();
 
-    this.gameMap = gameMap; // links the gameMap to Player
-
     this.changedNodes = true; // when true, NPCs that use A* will recalculate their path
-
-    this.currentNode = this.getCurrentMapNode(this.gameMap);
 
     // Player Stats
     this.moveSpeed = 25;
@@ -102,13 +98,9 @@ export class Player {
 
   }
 
-  getCurrentMapNode(gameMap) {
-    let index = this.convertToGridIndex(this.location, gameMap);
-    return gameMap.mapGraph.getAt(index.x, index.z);
-  }
 
-  checkNodeChange() {
-    let comparison = this.getCurrentMapNode(this.gameMap)
+  checkNodeChange(gameMap) {
+    let comparison = gameMap.quantize(this.location);
 
     if (this.currentNode !== comparison) {
       this.currentNode = comparison;
