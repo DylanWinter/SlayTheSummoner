@@ -1,7 +1,8 @@
 import * as THREE from 'three';
 import { VectorUtil } from '../Utils/VectorUtil.js';
+import { State } from '../World/State.js';
 
-/**
+ /**
  * 
  * The BaseEnemy class will be used for:
  * NPC movement
@@ -9,11 +10,11 @@ import { VectorUtil } from '../Utils/VectorUtil.js';
  **/
 export class BaseEnemy {
 
-  constructor() {
+  constructor(player, gameMap) {
 
-    // Links the player and mapGraph to the BaseEnemy
+    // Links the player and gameMap to the BaseEnemy
     //this.player = player;
-    //this.mapGraph = mapGraph
+    //this.gameMap = gameMap;
 
     // Creating a game object for our BaseEnemy
     let geo = new THREE.SphereGeometry(this.size);
@@ -27,6 +28,7 @@ export class BaseEnemy {
     this.location = new THREE.Vector3(0,0,0);
     this.velocity = new THREE.Vector3(0,0,0);
     this.acceleration = new THREE.Vector3(0,0,0);
+
     
     this.topSpeed = 10;
     this.mass = 1;
@@ -37,25 +39,11 @@ export class BaseEnemy {
     this.isAlive = true;
 
     this.pathPoint = 0;
-
+    
   }
 
-  // Wrap around the scene
-  checkBounds(bounds) {
-    this.location.x = THREE.MathUtils.euclideanModulo(
-        this.location.x - bounds.min.x,
-        bounds.max.x - bounds.min.x
-      ) + bounds.min.x;
-
-    this.location.z = THREE.MathUtils.euclideanModulo(
-        this.location.z - bounds.min.z,
-        bounds.max.z - bounds.min.z
-      ) + bounds.min.z;
-
-  }
-  
   // To update our enemy
-  update(deltaTime, player, gameMap, mapGraph) {
+  update(deltaTime, player, gameMap) {
     // Update acceleration via velocity
     this.velocity.addScaledVector(this.acceleration, deltaTime);
     if (this.velocity.length() > this.topSpeed) {
@@ -168,6 +156,31 @@ convertToGridIndex(location, gameMap) {
     return steer;
   }
 
+  // Flee steering behaviour
+  flee(target) {
+
+    let desired = new THREE.Vector3();
+    desired.subVectors(target, this.location);
+    desired.y = 0; // prevents vertical movement
+    desired.setLength(this.topSpeed);
+
+    // This is the only change compared
+    // to our seek steering behaviour
+    desired.multiplyScalar(-1);
+
+    let steer = new THREE.Vector3();
+    steer.subVectors(desired, this.velocity);     
+
+
+    if (steer.length() > this.maxForce) {
+      steer.setLength(this.maxForce);
+    }
+
+    return steer;
+
+  }
+
+
   // Arrive steering behaviour
   arrive(target, radius) {
 
@@ -202,6 +215,11 @@ convertToGridIndex(location, gameMap) {
     }
 
     return steer;
+  }
+
+  // Will be implemented when projectiles are finished
+  shootAtPlayer(player){
+    return
   }
 
   takeDamage(amount) {

@@ -95,7 +95,7 @@ export class MapGraph {
   }
 
   // A* Pathfinding
-  aStar(start, end, heuristic) {
+  aStar(start, end) {
 
     // Keep track of open nodes, costs, and parents
     let open = new MinHeap();
@@ -152,10 +152,10 @@ export class MapGraph {
 
   // Heuristic function that calculates Euclidean distance
   heuristic(node, targetNode) {
-    const dx = node.i - targetNode.i;
-    const dy = node.z - targetNode.z;
+    const dx = Math.abs(node.i - targetNode.i);
+    const dz = Math.abs(node.j - targetNode.j);
 
-    return Math.sqrt(dx * dx + dy * dy);
+    return Math.sqrt(dx * dx + dz * dz);
   }
 
   // Method to use our parents Map

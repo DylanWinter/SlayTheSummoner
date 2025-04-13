@@ -5,6 +5,7 @@ import {Vector3} from "three";
 import { GameMap } from "./World/GameMap.js";
 import { MapGraph } from "./World/MapGraph.js";
 import { BaseEnemy } from './Characters/BaseEnemy.js';
+import { ChasingEnemy } from './Characters/ChasingEnemy.js';
 
 
 
@@ -22,10 +23,10 @@ let gameMap;
 let mapGraph;
 
 // Create player
-const player = new Player();
+let player;
 
 // Test NPC
-const enemy = new BaseEnemy();
+let enemy;
 
 // Declare the path to follow
 let path;
@@ -78,10 +79,13 @@ function init() {
   mapGraph = gameMap.getMapGraph()
 
 
-  player.location.set(20, 0, 20);
-  player.gameObject.position.copy(player.location); // Update visual position
-
   scene.add(gameMap.gameObject);
+
+  player = new Player(gameMap);
+  enemy = new ChasingEnemy();
+
+  player.location.set(10, 0, 10);
+  player.gameObject.position.copy(player.location); // Update visual position
 
   scene.add(player.gameObject)
 
@@ -89,11 +93,11 @@ function init() {
 
 
   // Create a start and end for our path
-  start = enemy.getCurrentMapNode(gameMap);
-  end = player.getCurrentMapNode(gameMap);
+  //start = enemy.getCurrentMapNode(gameMap);
+  //end = player.getCurrentMapNode(gameMap);
 
   // Call path find on start to end
-  path = gameMap.pathFind(start, end);
+  //path = gameMap.pathFind(start, end);
 
   // First call to animate
   animate();
@@ -115,11 +119,11 @@ function animate() {
   //end = player.getCurrentMapNode(gameMap);
   //path = gameMap.pathFind(start, end);
 
-  let steer = enemy.simpleFollow(path);
+  //let steer = enemy.simpleFollow(path);
 
-  enemy.applyForce(steer);
+  //enemy.applyForce(steer);
 
-  enemy.update(deltaTime, gameMap.bounds, player, gameMap, mapGraph);
+  enemy.update(deltaTime, player, gameMap);
 }
 
 init();

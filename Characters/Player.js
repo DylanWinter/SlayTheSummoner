@@ -3,7 +3,7 @@ import { VectorUtil } from '../Utils/VectorUtil.js';
 import { UI } from './UI.js';
 
 export class Player {
-  constructor() {
+  constructor(gameMap) {
     let coneGeo = new THREE.ConeGeometry(0.5, 1, 10);
     let coneMat = new THREE.MeshStandardMaterial({color: "blue"});
     let mesh = new THREE.Mesh(coneGeo, coneMat);
@@ -14,6 +14,12 @@ export class Player {
 
     this.location = new THREE.Vector3(0, 0, 0);
     this.raycaster = new THREE.Raycaster();
+
+    this.gameMap = gameMap; // links the gameMap to Player
+
+    this.changedNodes = true; // when true, NPCs that use A* will recalculate their path
+
+    this.currentNode = this.getCurrentMapNode(this.gameMap);
 
     // Player Stats
     this.moveSpeed = 15;
@@ -28,14 +34,14 @@ export class Player {
   }
 
   // Main function to handle player movement actions
-  update(keys, mouse, camera, deltaTime, map) {
-    this.handleMovement(keys, deltaTime, map);
+  update(keys, mouse, camera, deltaTime, gameMap) {
+    this.handleMovement(keys, deltaTime, gameMap);
     this.handleLook(mouse, camera);
     this.ui.update();
   }
 
   // Updates player movement based on keyboard input. Handles collisions.
-  handleMovement(keys, deltaTime, map) {
+  handleMovement(keys, deltaTime, gameMap) {
     let moveVector = new THREE.Vector3();
     if (keys.a) {
       moveVector.add(new THREE.Vector3(-1, 0, 0));
@@ -51,7 +57,7 @@ export class Player {
     }
     moveVector.setLength(this.moveSpeed * deltaTime);
     let newPos = VectorUtil.add(moveVector, this.location)
-    this.handleCollision(this.location, newPos, map, moveVector);
+    this.handleCollision(this.location, newPos, gameMap, moveVector);
     this.gameObject.position.copy(this.location);
   }
 
@@ -67,30 +73,44 @@ export class Player {
   }
 
   // Checks for collisions independently in x and z directions. If none found, updates location in that direction.
-  handleCollision(currPos, newPos, map, moveVector) {
-    let oldGridIndex = this.convertToGridIndex(currPos, map);
-    let newGridIndex = this.convertToGridIndex(newPos, map)
-    if (map.mapGraph.getAt(newGridIndex.x, oldGridIndex.z).isTraversable()) {
+  handleCollision(currPos, newPos, gameMap, moveVector) {
+    let oldGridIndex = this.convertToGridIndex(currPos, gameMap);
+    let newGridIndex = this.convertToGridIndex(newPos, gameMap)
+    if (gameMap.mapGraph.getAt(newGridIndex.x, oldGridIndex.z).isTraversable()) {
       this.location.x += moveVector.x;
     }
-    if (map.mapGraph.getAt(oldGridIndex.x, newGridIndex.z).isTraversable()) {
+    if (gameMap.mapGraph.getAt(oldGridIndex.x, newGridIndex.z).isTraversable()) {
       this.location.z += moveVector.z;
     }
   }
 
   // Converts a world space position into a usable MapGraph index
-  convertToGridIndex(location, map) {
+  convertToGridIndex(location, gameMap) {
     return new THREE.Vector3(
-      Math.floor(location.x / map.tileSize) + Math.abs(map.bounds.max.x - map.bounds.min.x) / map.tileSize / 2,
+      Math.floor(location.x / gameMap.tileSize) + Math.abs(gameMap.bounds.max.x - gameMap.bounds.min.x) / gameMap.tileSize / 2,
       location.y,
-      Math.floor(location.z / map.tileSize) + Math.abs(map.bounds.max.z - map.bounds.min.z) / map.tileSize / 2);
+      Math.floor(location.z / gameMap.tileSize) + Math.abs(gameMap.bounds.max.z - gameMap.bounds.min.z) / gameMap.tileSize / 2);
   }
 
-  getCurrentMapNode(map) {
-    let index = this.convertToGridIndex(this.location, map);
-    return map.mapGraph.getAt(index.x, index.z);
+  getCurrentMapNode(gameMap) {
+    let index = this.convertToGridIndex(this.location, gameMap);
+    return gameMap.mapGraph.getAt(index.x, index.z);
   }
 
+  checkNodeChange() {
+    let comparison = this.getCurrentMapNode(this.gameMap)
+
+    if (this.currentNode !== comparison) {
+      this.currentNode = comparison;
+      this.changedNodes = false;
+      console.log("Player has changed nodes");
+
+      return true;
+    }
+
+    else return false;
+    
+  }
 
   // --- Player stats manipulation methods --- //
 
@@ -125,7 +145,7 @@ export class Player {
   // Used for max health upgrades/downgrades
   changeMaxHealth(amount) {
     this.maxHealth += amount;
-    this.updateUI();
+    this.ui.updateUI();
   }
 
 
