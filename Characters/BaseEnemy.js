@@ -20,8 +20,8 @@ export class BaseEnemy {
   }
 
   // To update our character
-  update(deltaTime, bounds) {
-
+  update(deltaTime) {
+    this.gameObject.position.copy(this.location);
   }
 
   takeDamage(amount) {
@@ -33,6 +33,7 @@ export class BaseEnemy {
 
   die() {
     this.isAlive = false;
+    this.gameObject.parent.remove(this.gameObject)
   }
 
 }

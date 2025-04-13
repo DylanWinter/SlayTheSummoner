@@ -47,7 +47,7 @@ export class GameMap {
   // Method to get from node to world location
   localize(node) {
     let x = this.bounds.min.x + (node.i * this.tileSize) + this.tileSize/2;
-    let y = this.tileSize;
+    let y = 0;
     let z = this.bounds.min.z + (node.j * this.tileSize) + this.tileSize/2;
     return new THREE.Vector3(x, y, z);
   }
