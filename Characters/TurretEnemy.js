@@ -2,6 +2,8 @@ import * as THREE from 'three';
 import { BaseEnemy } from './BaseEnemy.js';
 import { State } from '../World/State.js';
 import {VectorUtil} from "../Utils/VectorUtil";
+import {Projectile} from "./Projectile";
+import {deltaTime} from "three/tsl";
 
 
 export class TurretEnemy extends BaseEnemy {
@@ -11,7 +13,11 @@ export class TurretEnemy extends BaseEnemy {
         this.state = new ScanningForPlayer();
         this.state.enterState(this);
         this.useCollision = false;
+        this.range = 150;
 
+        this.projectileSpeed = 25;
+        this.fireCooldown = 0.4;
+        this.fireTimer = this.fireCooldown;
     }
 
 
@@ -23,7 +29,14 @@ export class TurretEnemy extends BaseEnemy {
 
     update(deltaTime, player, gameMap) {
         super.update(deltaTime, player, gameMap);
-        this.state.updateState(this, player, gameMap);
+        this.state.updateState(this, player, gameMap, deltaTime);
+    }
+
+    shootAtPlayer(player, gameMap){
+        let direction = VectorUtil.sub(player.location, this.location).normalize();
+        let proj = new Projectile(this.location, direction, this.projectileSpeed, false);
+        gameMap.gameObject.parent.add(proj.gameObject);
+        gameMap.projectiles.push(proj);
     }
 
     shootAtPlayer(player, gameMap) {
@@ -44,7 +57,8 @@ export class ScanningForPlayer extends State {
         let distance = enemy.location.distanceTo(player.location);
 
         // Changes to shooting state if the player is close enough and is within line of sight
-        if (distance < 30) { // add an and to this if statement for LOS check
+
+        if (distance < this.range) { // add an and to this if statement for LOS check
             enemy.switchState(new ShootingAtPlayer());
         }
     }
@@ -58,17 +72,23 @@ export class ShootingAtPlayer extends State {
         console.log("ShootingAtPlayer");
     }
 
-    
-    updateState(enemy, player, gameMap) {
+
+    updateState(enemy, player, gameMap, deltaTime) {
         let distance = enemy.location.distanceTo(player.location);
 
         // Changes to scanning state if player is too far away or breaks line of sight
-        if (distance > 30) { // add an or to this if statement for LOS check
+        if (distance > enemy.range) { // add an or to this if statement for LOS check
             enemy.switchState(new ScanningForPlayer());
         }
 
         else {
-            enemy.shootAtPlayer(player);
+            if (enemy.fireTimer <= 0) {
+                enemy.fireTimer = enemy.fireCooldown;
+                enemy.shootAtPlayer(player, gameMap);
+            }
+            else {
+                enemy.fireTimer -= deltaTime;
+            }
         }
     }
 
