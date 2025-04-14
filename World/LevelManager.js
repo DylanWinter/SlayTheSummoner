@@ -69,6 +69,8 @@ export class LevelManager {
       case 'phantom':
         enemy = new PhantomEnemy();
         break;
+      case 'boss':
+        enemy = new BossEnemy();
       default:
         console.log("Invalid enemy type in instantiateEnemies:", type);
         break;
