@@ -4,6 +4,7 @@ import { GameMap } from "./GameMap";
 import {BaseEnemy} from "../Characters/BaseEnemy";
 import {ChasingEnemy} from "../Characters/ChasingEnemy";
 import {TurretEnemy} from "../Characters/TurretEnemy";
+import {PhantomEnemy} from "../Characters/PhantomEnemy";
 
 
 export class LevelManager {
@@ -36,31 +37,46 @@ export class LevelManager {
     let enemyData = this.levels[this.nextLevel].enemies;
     let enemies = [];
     for (let enemyType of enemyData) {
-
-      let spawn = this.gameMap.mapGraph.getRandomGroundNode();
-      let enemy;
-
-      switch (enemyType)
-      {
-        case 'base':
-          enemy = new BaseEnemy();
-          break;
-        case 'chasing':
-          enemy = new ChasingEnemy();
-          break;
-        case 'turret':
-          enemy = new TurretEnemy();
-          break;
-        default:
-          console.log("Invalid enemy type in instantiateEnemies:", enemyType);
-          break;
-      }
-
-      enemy.location = (this.gameMap.localize(spawn));
+      let enemy = this.instantiateEnemy(enemyType)
       enemies.push(enemy);
-      this.scene.add(enemy.gameObject);
     }
     return enemies;
+  }
+
+  // Instantiates a single enemy. If a Vector3 pos if given, spawns it at that point. Otherwise, chooses a random node.
+  instantiateEnemy(type, pos=null) {
+    let spawn;
+    let enemy;
+
+    if (!pos) {
+      spawn = this.gameMap.mapGraph.getRandomGroundNode();
+    }
+    else {
+      spawn = this.gameMap.quantize(pos);
+    }
+
+    switch (type)
+    {
+      case 'base':
+        enemy = new BaseEnemy();
+        break;
+      case 'chasing':
+        enemy = new ChasingEnemy();
+        break;
+      case 'turret':
+        enemy = new TurretEnemy();
+        break;
+      case 'phantom':
+        enemy = new PhantomEnemy();
+        break;
+      default:
+        console.log("Invalid enemy type in instantiateEnemies:", type);
+        break;
+    }
+
+    enemy.location = (this.gameMap.localize(spawn));
+    this.scene.add(enemy.gameObject);
+    return enemy;
   }
 
   incrementNextLevel() {
