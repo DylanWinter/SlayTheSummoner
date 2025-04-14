@@ -13,10 +13,10 @@ export class LevelManager {
     this.nextLevel = 0;
 
     this.levels = [
-      {type: 'default', groundColor: 0xDDDDDD, obstacleColor: 0x555555, enemies: ['chasing']},
-      {type: 'default', groundColor: 0x4169e1, obstacleColor: 0xDC143C},
-      {type: 'default', groundColor: 0xDDDDDD, obstacleColor: 0x555555},
-      {type: 'boss', groundColor: 0xDDDDDD, obstacleColor: 0x555555},
+      {type: 'default', groundColor: 0xDDDDDD, obstacleColor: 0x555555, enemies: []},
+      {type: 'default', groundColor: 0x4169e1, obstacleColor: 0xDC143C, enemies: []},
+      {type: 'default', groundColor: 0xDDDDDD, obstacleColor: 0x555555, enemies: []},
+      {type: 'boss', groundColor: 0xDDDDDD, obstacleColor: 0x555555, enemies: []},
     ]
   }
 
