@@ -17,7 +17,8 @@ export class ChasingEnemy extends BaseEnemy {
 
         this.fireCooldown = 1;
         this.fireTimer = this.fireCooldown;
-        this.range = 35;
+        this.fleeRange = 30;
+        this.range = 45;
     }
 
 
@@ -72,22 +73,22 @@ export class ChasingEnemy extends BaseEnemy {
 
 export class PathingToPlayer extends State {
 
-    enterState() {
+    enterState(enemy) {
+        this.useCollision = false;
         console.log("PathingToPlayer");
     }  
 
 
     updateState(enemy, player, gameMap, deltaTime) {
-        this.useCollision = false;
         let distance = enemy.location.distanceTo(player.location);
 
         // Changes to evade state if the enemy is too close to the player
-        if (distance < enemy.size * 12) {
+        if (distance < enemy.fleeRange) {
             enemy.switchState(new EvadeFromPlayer());
         }
 
         // Shoot at the enemy if they are within a certain distance
-        if (distance < enemy.size * 25) {
+        if (distance < enemy.range) {
             if (enemy.fireTimer <= 0) {
                 enemy.shootAtPlayer(player, gameMap);
                 enemy.fireTimer = enemy.fireCooldown;
@@ -116,17 +117,17 @@ export class PathingToPlayer extends State {
 
 export class EvadeFromPlayer extends State {
 
-    enterState() {
+    enterState(enemy) {
         console.log("EvadeFromPlayer");
+        enemy.useCollision = true;
     }
 
 
     updateState(enemy, player, gameMap, deltaTime) {
-        enemy.useCollision = true;
         let distance = enemy.location.distanceTo(player.location);
-
         // Changes to A* pathfinding state if the enemy is too far away from the player
-        if (distance > this.range) {
+        if (distance > enemy.fleeRange) {
+
             enemy.switchState(new PathingToPlayer());
         }
 
