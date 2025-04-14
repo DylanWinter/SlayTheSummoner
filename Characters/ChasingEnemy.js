@@ -17,7 +17,7 @@ export class ChasingEnemy extends BaseEnemy {
 
         this.fireCooldown = 1;
         this.fireTimer = this.fireCooldown;
-        this.fleeRange = 30;
+        this.fleeRange = 20;
         this.range = 45;
     }
 
