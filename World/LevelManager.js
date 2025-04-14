@@ -38,7 +38,6 @@ export class LevelManager {
     let enemies = [];
     for (let enemyType of enemyData) {
       let enemy = this.instantiateEnemy(enemyType)
-      this.gameMap.enemies.push(enemy);
     }
   }
 
@@ -75,6 +74,7 @@ export class LevelManager {
         break;
     }
 
+    this.gameMap.enemies.push(enemy);
     enemy.location = (this.gameMap.localize(spawn));
     this.scene.add(enemy.gameObject);
     return enemy;
