@@ -74,7 +74,7 @@ export class ChasingEnemy extends BaseEnemy {
 export class PathingToPlayer extends State {
 
     enterState(enemy) {
-        this.useCollision = false;
+        enemy.useCollision = false;
         console.log("PathingToPlayer");
     }  
 
@@ -118,8 +118,8 @@ export class PathingToPlayer extends State {
 export class EvadeFromPlayer extends State {
 
     enterState(enemy) {
-        console.log("EvadeFromPlayer");
         enemy.useCollision = true;
+        console.log("EvadeFromPlayer");
     }
 
 
