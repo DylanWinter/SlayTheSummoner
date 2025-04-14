@@ -26,7 +26,7 @@ export class Projectile {
       (gltf) => {
         this.mesh = gltf.scene;
         this.gameObject.add(this.mesh);
-        this.mesh.rotation.x = Math.PI/2;
+        this.mesh.rotation.x = -Math.PI/2;
       },
       undefined,
       (error) => {
