@@ -19,7 +19,6 @@ export class Player {
     this.maxHealth = 3;
     this.health = this.maxHealth;
     this.strength = 1; // determines damage per attack
-    this.bombs = 3;
     this.isAlive = true;
     this.hasFoundExit = false;
     this.projectileSpeed = 40;
@@ -160,7 +159,20 @@ export class Player {
       this.isAlive = false;
 
       console.log(`You are dead!`);
+      this.die();
     }
+  }
+
+  die() {
+
+    // Creates a death screen that resets the game after 5 seconds
+    const deathScreen = document.getElementById('death-screen');
+    deathScreen.classList.add('show');
+
+    // Wait 3 seconds then reload the page
+    setTimeout(() => {
+      window.location.reload();
+    }, 5000)
   }
 
 
@@ -208,13 +220,4 @@ export class Player {
     }
   }
 
-  // Used to increment/decrement bomb count
-  changeBombCount(amount) {
-    this.bombs += amount;
-
-    // Makes sure player does not have less than 0 bombs
-    if (this.bombs < 0) {
-      this.bombs = 0;
-    }
-  }
 }

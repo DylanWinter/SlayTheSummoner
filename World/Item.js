@@ -67,16 +67,25 @@ export class Item {
     if (distance <= this.radius) {
         if (this.type == Item.Type.StrengthUp) {
             player.changeStrength(1);
+
+            this.gameObject.parent.remove(this.gameObject); // remove the item after it is picked up
+            this.isAlive = false;
         }
         else if (this.type == Item.Type.MaxHealthUp) {
             player.changeMaxHealth(1);
+
+            this.gameObject.parent.remove(this.gameObject);
+            this.isAlive = false;
         }
         else if (this.type == Item.Type.Heal) {
-            player.heal(1);
+            if (player.getCurrentHealth == player.getMaxHealth) {
+              return; // do nothing if the player is already at full health
+            }
+            else {
+              player.heal(1);
+            }
         }
 
-        this.gameObject.parent.remove(this.gameObject); // remove the item after it is picked up
-        this.isAlive = false;
 
     }
   }

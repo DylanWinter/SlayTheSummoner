@@ -71,6 +71,17 @@ export class BossEnemy extends BaseEnemy {
         gameMap.gameObject.parent.add(proj.gameObject);
         gameMap.projectiles.push(proj);
     }
+
+    die() {
+        super.die();
+
+        // Creates a victory screen that resets the game after 5 seconds
+        const winScreen = document.getElementById('win-screen');
+        winScreen.classList.add('show');
+        setTimeout(() => {
+          location.reload();
+        }, 5000);
+    }
 }
 
 
