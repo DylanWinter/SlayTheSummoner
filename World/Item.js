@@ -20,6 +20,8 @@ export class Item {
 
     // Initializing location just in case
     this.location = new THREE.Vector3(0,0,0);
+
+    this.isAlive = true;
     
     // Sets the colour of our item based on type
     switch (type) {
@@ -41,6 +43,16 @@ export class Item {
     let material = new THREE.MeshStandardMaterial({color: this.color});
     this.gameObject = new THREE.Mesh(geometry, material);
     
+  }
+
+  // To update our enemy
+  update(deltaTime, player, gameMap) {
+    if (!this.isAlive) {
+      return;
+    }
+    this.onPickup(player);
+    this.gameObject.position.copy(this.location);
+  
   }
   
   // To set the location of our item
@@ -64,6 +76,8 @@ export class Item {
         }
 
         this.gameObject.parent.remove(this.gameObject); // remove the item after it is picked up
+        this.isAlive = false;
+
     }
   }
 
