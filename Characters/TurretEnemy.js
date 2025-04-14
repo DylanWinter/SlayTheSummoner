@@ -39,10 +39,6 @@ export class TurretEnemy extends BaseEnemy {
         gameMap.projectiles.push(proj);
     }
 
-    shootAtPlayer(player, gameMap) {
-
-    }
-
 }
 
 
@@ -58,7 +54,7 @@ export class ScanningForPlayer extends State {
 
         // Changes to shooting state if the player is close enough and is within line of sight
 
-        if (distance < this.range) { // add an and to this if statement for LOS check
+        if (distance < enemy.range) { // add an and to this if statement for LOS check
             enemy.switchState(new ShootingAtPlayer());
         }
     }

@@ -171,9 +171,14 @@ export class BaseEnemy {
   }
 
   die() {
+    this.dropItem;
     this.isAlive = false;
     this.gameObject.parent.remove(this.gameObject);
     console.log("Enemy killed");
+  }
+
+  dropItem() {
+    return; // add cases for strength/maxHealth upgrade and heal
   }
 
 }

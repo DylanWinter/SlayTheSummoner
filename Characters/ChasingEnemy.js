@@ -132,7 +132,7 @@ export class EvadeFromPlayer extends State {
         }
 
         // Shoot at the enemy if they are within a certain distance
-        if (distance < this.range) {
+        if (distance < enemy.range) {
             if (enemy.fireTimer <= 0) {
                 enemy.shootAtPlayer(player, gameMap);
                 enemy.fireTimer = enemy.fireCooldown;
