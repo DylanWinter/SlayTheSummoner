@@ -164,6 +164,8 @@ export class Player {
   }
 
   die() {
+
+    // Creates a death screen that resets the game after 5 seconds
     const deathScreen = document.getElementById('death-screen');
     deathScreen.classList.add('show');
 
