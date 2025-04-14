@@ -17,6 +17,7 @@ export class ChasingEnemy extends BaseEnemy {
 
         this.fireCooldown = 1;
         this.fireTimer = this.fireCooldown;
+        this.range = 35;
     }
 
 
@@ -133,12 +134,12 @@ export class EvadeFromPlayer extends State {
         let distance = enemy.location.distanceTo(player.location);
 
         // Changes to A* pathfinding state if the enemy is too far away from the player
-        if (distance > enemy.size * 15) {
+        if (distance > this.range) {
             enemy.switchState(new PathingToPlayer());
         }
 
         // Shoot at the enemy if they are within a certain distance
-        if (distance < enemy.size * 25) {
+        if (distance < this.range) {
             if (enemy.fireTimer <= 0) {
                 enemy.shootAtPlayer(player, gameMap);
                 enemy.fireTimer = enemy.fireCooldown;
