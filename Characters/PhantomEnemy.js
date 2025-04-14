@@ -10,14 +10,13 @@ export class ChasingEnemy extends BaseEnemy {
 
     constructor() {
         super();
-        this.state = new PathingToPlayer();
+        this.state = new SeekToPlayer();
         this.state.enterState(this);
         this.useCollision = false;
         this.projectileSpeed = 25;
 
         this.fireCooldown = 1;
         this.fireTimer = this.fireCooldown;
-        this.range = 35;
     }
 
 
@@ -44,17 +43,9 @@ export class ChasingEnemy extends BaseEnemy {
             this.gameObject.rotation.y = angle;
         }
 
-        // For fleeing
-        if (this.useCollision) {
-            this.handleCollision(this.location,
-              VectorUtil.add(VectorUtil.multiplyScalar(this.velocity, deltaTime), this.location),
-              gameMap,
-              deltaTime)
-        }
-        // For pathfinding
-        else {
-            this.location.addScaledVector(this.velocity, deltaTime);
-        }
+
+        this.location.addScaledVector(this.velocity, deltaTime);
+
 
         this.gameObject.position.copy(this.location);
 
@@ -70,24 +61,23 @@ export class ChasingEnemy extends BaseEnemy {
 }
 
 
-export class PathingToPlayer extends State {
+export class SeekToPlayer extends State {
 
     enterState() {
-        console.log("PathingToPlayer");
+        console.log("SeekToPlayer");
     }  
 
 
     updateState(enemy, player, gameMap, deltaTime) {
-        this.useCollision = false;
         let distance = enemy.location.distanceTo(player.location);
 
         // Changes to evade state if the enemy is too close to the player
-        if (distance < 12) {
+        if (distance < 4) {
             enemy.switchState(new EvadeFromPlayer());
         }
 
         // Shoot at the enemy if they are within a certain distance
-        if (distance < 25) {
+        if (distance < 12) {
             if (enemy.fireTimer <= 0) {
                 enemy.shootAtPlayer(player, gameMap);
                 enemy.fireTimer = enemy.fireCooldown;
@@ -97,26 +87,8 @@ export class PathingToPlayer extends State {
             }
         }
 
-        // A* should be called in main to avoid inefficiency of every enemy calling it
-        // path will be passed to each NPC via update
-
-        // The enemy only paths to the player when they are close
-        if (distance < 55) {
-
-            // Create a start and end for the path
-            let start = gameMap.quantize(enemy.location);
-            let end = gameMap.quantize(player.location);
-
-            // Call path find on start to end
-            let path = gameMap.pathFind(start, end);
-
-            let steer = enemy.simpleFollow(path);
-            enemy.applyForce(steer);
-        }
-        else {
-            enemy.slowToStop();
-        }
-
+        let steer = enemy.seek(player.location);
+        enemy.applyForce(steer);
     }
     
 }
@@ -133,13 +105,13 @@ export class EvadeFromPlayer extends State {
         enemy.useCollision = true;
         let distance = enemy.location.distanceTo(player.location);
 
-        // Changes to A* pathfinding state if the enemy is too far away from the player
-        if (distance > this.range) {
+        // Changes to seek movement state is player is too far away
+        if (distance > enemy.size * 15) {
             enemy.switchState(new PathingToPlayer());
         }
 
         // Shoot at the enemy if they are within a certain distance
-        if (distance < this.range) {
+        if (distance < enemy.size * 25) {
             if (enemy.fireTimer <= 0) {
                 enemy.shootAtPlayer(player, gameMap);
                 enemy.fireTimer = enemy.fireCooldown;

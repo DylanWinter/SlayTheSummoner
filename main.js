@@ -116,7 +116,7 @@ function animate() {
 
   // Update player based on input
   player.update(keys, mouse, camera, deltaTime, levelManager.gameMap);
-
+  
   // Update projectiles
   levelManager.gameMap.projectiles.forEach((projectile) => {
     projectile.update(deltaTime, levelManager.gameMap, enemies, player);
