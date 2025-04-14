@@ -93,7 +93,7 @@ function loadNextLevel() {
     let newNode = levelManager.gameMap.mapGraph.getRandomGroundNode();
     player.location = levelManager.gameMap.localize(newNode);
   }
-  levelManager.gameMap.enemies = levelManager.instantiateEnemies();
+  levelManager.instantiateEnemies();
   levelManager.incrementNextLevel();
 }
 

@@ -14,7 +14,7 @@ export class LevelManager {
     this.nextLevel = 0;
 
     this.levels = [
-      {type: 'default', groundColor: 0xDDDDDD, obstacleColor: 0x555555, enemies: []},
+      {type: 'default', groundColor: 0xDDDDDD, obstacleColor: 0x555555, enemies: ['chasing', 'turret', 'phantom']},
       {type: 'default', groundColor: 0x4169e1, obstacleColor: 0xDC143C, enemies: []},
       {type: 'default', groundColor: 0xDDDDDD, obstacleColor: 0x555555, enemies: []},
       {type: 'boss', groundColor: 0xDDDDDD, obstacleColor: 0x555555, enemies: []},
@@ -38,9 +38,8 @@ export class LevelManager {
     let enemies = [];
     for (let enemyType of enemyData) {
       let enemy = this.instantiateEnemy(enemyType)
-      enemies.push(enemy);
+      this.gameMap.enemies.push(enemy);
     }
-    return enemies;
   }
 
   // Instantiates a single enemy. If a Vector3 pos if given, spawns it at that point. Otherwise, chooses a random node.
