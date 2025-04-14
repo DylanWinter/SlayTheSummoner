@@ -6,9 +6,7 @@ import {Vector3} from "three";
 
 export class BaseEnemy {
 
-  constructor(levelManager) {
-    this.levelManager = levelManager;
-    
+  constructor() {
     this.size = 1;
 
     // Creating a game object for our BaseEnemy
