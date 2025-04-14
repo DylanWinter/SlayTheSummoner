@@ -7,10 +7,8 @@ export class UI {
       this.player = player; // links the UI to the player
       this.healthBarElement = this.createHealthBar();
       this.strengthTextElement = this.createTextElement();
-      this.bombCountTextElement = this.createTextElement();
       document.body.appendChild(this.healthBarElement);
       document.body.appendChild(this.strengthTextElement);
-      document.body.appendChild(this.bombCountTextElement);
 
 
       this.updateUI();
@@ -110,8 +108,6 @@ export class UI {
         // Updates strength text
         this.strengthTextElement.textContent = `Strength: ${this.player.strength}`;
 
-        // Updates bomb count text
-        this.bombCountTextElement.textContent = `Bombs: ${this.player.bombs}`;
     }
     
 
