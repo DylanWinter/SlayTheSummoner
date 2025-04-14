@@ -1,17 +1,11 @@
 import * as THREE from 'three';
 import { VectorUtil } from '../Utils/VectorUtil.js';
 import {distance} from "three/tsl";
+import {GLTFLoader} from "three/addons";
 
 export class Projectile {
   constructor(position, direction, speed, isFriendly=true) {
-
-    let sphereGeo = new THREE.SphereGeometry(0.2);
-    let coneMat = new THREE.MeshStandardMaterial({color: "blue"});
-    let mesh = new THREE.Mesh(sphereGeo, coneMat);
-    mesh.rotation.x = Math.PI/2;
-
     this.gameObject = new THREE.Group();
-    this.gameObject.add(mesh);
 
     this.location = position;
     this.direction = direction;
@@ -20,6 +14,25 @@ export class Projectile {
     this.isFriendly = isFriendly;
 
     this.isAlive = true;
+
+    this.loadModel();
+    this.gameObject.lookAt(this.direction);
+  }
+
+  loadModel() {
+    const loader = new GLTFLoader();
+    loader.load(
+      'Assets/arrow.gltf',
+      (gltf) => {
+        this.mesh = gltf.scene;
+        this.gameObject.add(this.mesh);
+        this.mesh.rotation.x = Math.PI/2;
+      },
+      undefined,
+      (error) => {
+        console.error('Error while loading projectile model:', error);
+      }
+    );
   }
 
   update(deltaTime, map, enemies, player) {

@@ -3,16 +3,11 @@ import { VectorUtil } from '../Utils/VectorUtil.js';
 import { UI } from './UI.js';
 import {Projectile} from "./Projectile";
 import {Vector3} from "three";
+import {GLTFLoader} from "three/addons";
 
 export class Player {
   constructor() {
-    let coneGeo = new THREE.ConeGeometry(0.5, 1, 10);
-    let coneMat = new THREE.MeshStandardMaterial({color: "blue"});
-    let mesh = new THREE.Mesh(coneGeo, coneMat);
-    mesh.rotation.x = Math.PI/2;
-
     this.gameObject = new THREE.Group();
-    this.gameObject.add(mesh);
 
     this.location = new THREE.Vector3(0, 0, 0);
     this.raycaster = new THREE.Raycaster();
@@ -32,12 +27,40 @@ export class Player {
 
     // Creates UI and links it to the player
     this.ui = new UI(this);
+    this.loadModel();
+  }
+
+  loadModel() {
+    const loader = new GLTFLoader();
+    loader.load(
+      'Assets/Rogue_Hooded.glb',
+      (gltf) => {
+        this.mesh = gltf.scene;
+        this.gameObject.add(this.mesh);
+        if (gltf.animations && gltf.animations.length > 0) {
+          this.mixer = new THREE.AnimationMixer(this.mesh);
+        }
+
+        console.log(gltf.animations)
+        this.idleAnim = this.mixer.clipAction(gltf.animations[36]);
+        this.fireAnim = this.mixer.clipAction(gltf.animations[6])
+        this.runAnim = this.mixer.clipAction(gltf.animations[48])
+        this.idleAnim.play();
+      },
+      undefined,
+      (error) => {
+        console.error('Error while loading player model:', error);
+      }
+    );
   }
 
   // Main function to handle player movement actions
   update(keys, mouse, camera, deltaTime, gameMap) {
     this.handleMovement(keys, deltaTime, gameMap);
     this.handleLook(mouse, camera);
+    if (this.mixer) {
+      this.mixer.update(deltaTime);
+    }
     this.ui.update();
   }
 
@@ -57,6 +80,10 @@ export class Player {
       moveVector.add(new THREE.Vector3(0, 0, 1));
     }
     moveVector.setLength(this.moveSpeed * deltaTime);
+    // Plays animations based on direction of movement
+    if (this.runAnim) {
+      this.handleAnimation(moveVector);
+    }
     let newPos = VectorUtil.add(moveVector, this.location)
     this.handleCollision(this.location, newPos, gameMap, moveVector);
     this.gameObject.position.copy(this.location);
@@ -88,6 +115,20 @@ export class Player {
     }
   }
 
+  handleAnimation(moveVector) {
+    let fadeTime = 0.1;
+    if (moveVector.x === 0 && moveVector.z === 0) {
+      // Idle
+      this.runAnim.fadeOut(fadeTime).stop();
+      this.idleAnim.play();
+    } else if (moveVector.x !== 0 || moveVector.z !== 0) {
+      // Moving
+      if (!this.runAnim.isRunning()) {
+        this.runAnim.reset().fadeIn(fadeTime).play();
+      }
+      this.idleAnim.fadeOut(fadeTime).stop();
+    }
+  }
 
   fire(scene, projArray) {
     let direction = (new Vector3(Math.sin(this.gameObject.rotation.y),
@@ -96,23 +137,10 @@ export class Player {
     let proj = new Projectile(this.location, direction, this.projectileSpeed);
     scene.add(proj.gameObject);
     projArray.push(proj);
-
-  }
-
-
-  checkNodeChange(gameMap) {
-    let comparison = gameMap.quantize(this.location);
-
-    if (this.currentNode !== comparison) {
-      this.currentNode = comparison;
-      this.changedNodes = false;
-      console.log("Player has changed nodes");
-
-      return true;
-    }
-
-    else return false;
-    
+    this.fireAnim.setLoop(THREE.LoopOnce);
+    this.fireAnim.clampWhenFinished = true;
+    this.fireAnim.reset();
+    this.fireAnim.play();
   }
 
   // --- Player stats manipulation methods --- //

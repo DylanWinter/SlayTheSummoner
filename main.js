@@ -64,7 +64,7 @@ function init() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  camera.position.y = 55;
+  camera.position.y = 20;
   camera.lookAt(player.gameObject.position);
 
   // Create Light
