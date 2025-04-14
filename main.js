@@ -21,8 +21,6 @@ const clock = new THREE.Clock();
 // Create map
 let levelManager;
 
-let enemies = [];
-
 let mapGraph;
 
 // Create player
@@ -64,7 +62,7 @@ function init() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  camera.position.y = 20;
+  camera.position.y = 50;
   camera.lookAt(player.gameObject.position);
 
   // Create Light
@@ -87,15 +85,15 @@ function init() {
 function loadNextLevel() {
   levelManager.gameMap.projectiles.forEach((projectile) => {scene.remove(projectile.gameObject);});
   levelManager.gameMap.projectiles = [];
-  enemies.forEach(enemy => {scene.remove(enemy.gameObject);});
-  enemies = [];
+  levelManager.gameMap.enemies.forEach(enemy => {scene.remove(enemy.gameObject);});
+  levelManager.gameMap.enemies = [];
   player.hasFoundExit = false;
   levelManager.loadNextLevel();
   if (!levelManager.gameMap.quantize(player.location).isTraversable()) {
     let newNode = levelManager.gameMap.mapGraph.getRandomGroundNode();
     player.location = levelManager.gameMap.localize(newNode);
   }
-  enemies = levelManager.instantiateEnemies();
+  levelManager.gameMap.enemies = levelManager.instantiateEnemies();
   levelManager.incrementNextLevel();
 }
 
@@ -119,7 +117,7 @@ function animate() {
   
   // Update projectiles
   levelManager.gameMap.projectiles.forEach((projectile) => {
-    projectile.update(deltaTime, levelManager.gameMap, enemies, player);
+    projectile.update(deltaTime, levelManager.gameMap, levelManager.gameMap.enemies, player);
     if (!projectile.isAlive) {
       scene.remove(projectile.gameObject);
     }
@@ -127,10 +125,10 @@ function animate() {
   levelManager.gameMap.projectiles = levelManager.gameMap.projectiles.filter(projectile => projectile.isAlive);
 
   // Update enemies
-  enemies.forEach((enemy) => {
+  levelManager.gameMap.enemies.forEach((enemy) => {
     enemy.update(deltaTime, player, levelManager.gameMap);
   })
-  enemies = enemies.filter(enemy => enemy.isAlive);
+  levelManager.gameMap.enemies = levelManager.gameMap.enemies.filter(enemy => enemy.isAlive);
 
 
   // Move camera

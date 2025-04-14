@@ -10,6 +10,7 @@ export class GameMap {
   constructor(groundColor=0xDDDDDD, obstacleColor=0x555555) {
 
     this.projectiles = [];
+    this.enemies = [];
 
     // Initialize bounds in here!
     this.bounds = new THREE.Box3(
