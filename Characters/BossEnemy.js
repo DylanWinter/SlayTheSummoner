@@ -21,7 +21,7 @@ export class BossEnemy extends BaseEnemy {
         this.maxHealth = 200;
         this.health = 200;
         this.size = 3;
-        this.gameObject.scale.set(3, 1, 3); // Triples the size
+        this.gameObject.scale.set(3, 3, 3); // Triples the size
     }
 
 
@@ -195,10 +195,10 @@ export class Phase3 extends State {
         instantiateEnemy('turret', spawnPosition)
 
         spawnPosition = enemy.location.clone().add(new THREE.Vector3(-5, 0, 0));
-        instantiateEnemy('chasing', spawnPosition)
+        instantiateEnemy('turret', spawnPosition)
 
         spawnPosition = enemy.location.clone().add(new THREE.Vector3(-5, 0, 0));
-        instantiateEnemy('chasing', spawnPosition)
+        instantiateEnemy('turret', spawnPosition)
 
         // Spawns two chasing enemies to the bottom left and bottom right of the boss
         spawnPosition = enemy.location.clone().add(new THREE.Vector3(-5, 0, 5));
@@ -209,10 +209,10 @@ export class Phase3 extends State {
 
         // Spawns two phantom enemies to the top left and top right of the boss
         spawnPosition = enemy.location.clone().add(new THREE.Vector3(-5, 0, -5));
-        instantiateEnemy('chasing', spawnPosition)
+        instantiateEnemy('phantom', spawnPosition)
 
         spawnPosition = enemy.location.clone().add(new THREE.Vector3(5, 0, -5));
-        instantiateEnemy('chasing', spawnPosition)
+        instantiateEnemy('phantom', spawnPosition)
 
         console.log("Phase3");
     }
