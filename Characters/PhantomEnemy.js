@@ -4,19 +4,20 @@ import { State } from '../World/State.js';
 import {VectorUtil} from "../Utils/VectorUtil";
 import {Vector3} from "three";
 import {Projectile} from "./Projectile";
+import {deltaTime, distance} from "three/tsl";
 
 
-export class ChasingEnemy extends BaseEnemy {
+export class PhantomEnemy extends BaseEnemy {
 
     constructor() {
         super();
-        this.state = new SeekToPlayer();
-        this.state.enterState(this);
         this.useCollision = false;
         this.projectileSpeed = 25;
 
         this.fireCooldown = 1;
         this.fireTimer = this.fireCooldown;
+        this.topSpeed = 5;
+        this.damage = 1;
     }
 
 
@@ -28,7 +29,7 @@ export class ChasingEnemy extends BaseEnemy {
 
     update(deltaTime, player, gameMap) {
         super.update(deltaTime, player, gameMap);
-        this.state.updateState(this, player, gameMap, deltaTime);
+        this.acceleration = this.seek(player.location)
 
         // Update acceleration via velocity
         this.velocity.addScaledVector(this.acceleration, deltaTime);
@@ -43,86 +44,19 @@ export class ChasingEnemy extends BaseEnemy {
             this.gameObject.rotation.y = angle;
         }
 
-
         this.location.addScaledVector(this.velocity, deltaTime);
-
 
         this.gameObject.position.copy(this.location);
 
+        this.handleCollisionWithPlayer(player);
         this.acceleration.setLength(0);
     }
 
-    shootAtPlayer(player, gameMap){
-        let direction = VectorUtil.sub(player.location, this.location).normalize();
-        let proj = new Projectile(this.location, direction, this.projectileSpeed, false);
-        gameMap.gameObject.parent.add(proj.gameObject);
-        gameMap.projectiles.push(proj);
-    }
-}
-
-
-export class SeekToPlayer extends State {
-
-    enterState() {
-        console.log("SeekToPlayer");
-    }  
-
-
-    updateState(enemy, player, gameMap, deltaTime) {
-        let distance = enemy.location.distanceTo(player.location);
-
-        // Changes to evade state if the enemy is too close to the player
-        if (distance < 4) {
-            enemy.switchState(new EvadeFromPlayer());
+    handleCollisionWithPlayer(player) {
+        if (this.location.distanceTo(player.location) <= player.hitboxSize) {
+            this.die();
+            player.takeDamage(this.damage);
         }
-
-        // Shoot at the enemy if they are within a certain distance
-        if (distance < 12) {
-            if (enemy.fireTimer <= 0) {
-                enemy.shootAtPlayer(player, gameMap);
-                enemy.fireTimer = enemy.fireCooldown;
-            }
-            else {
-                enemy.fireTimer -= deltaTime;
-            }
-        }
-
-        let steer = enemy.seek(player.location);
-        enemy.applyForce(steer);
-    }
-    
-}
-
-
-export class EvadeFromPlayer extends State {
-
-    enterState() {
-        console.log("EvadeFromPlayer");
-    }
-
-
-    updateState(enemy, player, gameMap, deltaTime) {
-        enemy.useCollision = true;
-        let distance = enemy.location.distanceTo(player.location);
-
-        // Changes to seek movement state is player is too far away
-        if (distance > enemy.size * 15) {
-            enemy.switchState(new PathingToPlayer());
-        }
-
-        // Shoot at the enemy if they are within a certain distance
-        if (distance < enemy.size * 25) {
-            if (enemy.fireTimer <= 0) {
-                enemy.shootAtPlayer(player, gameMap);
-                enemy.fireTimer = enemy.fireCooldown;
-            }
-            else {
-                enemy.fireTimer -= deltaTime;
-            }
-        }
-
-        let steer = enemy.flee(player.location);
-        enemy.applyForce(steer);
     }
 
 }
