@@ -142,6 +142,22 @@ export class Player {
     }
   }
 
+
+  getStrength() {
+    return this.strength;
+  }
+
+
+  getMaxhealth() {
+    return this.maxHealth;
+  }
+
+
+  getCurrentHealth() {
+    return this.health;
+  }
+
+
   heal(amount) {
     if (!this.isAlive) return; // heal does not happen if the player is dead
     this.health = Math.min(this.maxHealth, this.health + amount);
@@ -162,13 +178,14 @@ export class Player {
   // Used for strength upgrades/downgrades
   changeStrength(amount) {
     this.strength += amount;
+    this.ui.updateUI();
 
     // Makes sure player does not go under 1 strength
     if (this.strength <= 0) {
       this.strength = 1;
+      this.ui.updateUI();
     }
   }
-
 
   // Used to increment/decrement bomb count
   changeBombCount(amount) {

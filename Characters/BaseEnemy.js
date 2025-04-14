@@ -117,6 +117,27 @@ export class BaseEnemy {
     return steer;
   }
 
+  // Gradually slows the character down to a stop
+  slowToStop() {
+    if (this.velocity.lengthSq() > 0.001) {
+      const deceleration = this.velocity.clone().multiplyScalar(-1);
+
+      // Limits the deceleration force so it doesn’t stop instantly
+      if (deceleration.length() > this.maxForce) {
+        deceleration.setLength(this.maxForce);
+      }
+
+      // Ensure no Y component in the force
+      deceleration.y = 0;
+
+      this.applyForce(deceleration);
+    } 
+    else {
+      this.stop(); // Fully stop if we're already very slow
+    }
+
+  }
+
   // Flee steering behaviour
   flee(target) {
 
@@ -141,16 +162,7 @@ export class BaseEnemy {
 
   }
 
-
-<<<<<<< HEAD
-=======
-  // Will be implemented when projectiles are finished
-  shootAtPlayer(player){
   
-  }
-
-  
->>>>>>> 09569f173d74eb506860fb025c031482a1ae5196
   takeDamage(amount) {
     this.health -= amount;
     if (this.health <= 0 && this.isAlive) {
