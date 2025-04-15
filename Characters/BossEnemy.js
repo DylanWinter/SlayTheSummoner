@@ -8,10 +8,9 @@ import {Projectile} from "./Projectile";
 
 export class BossEnemy extends BaseEnemy {
 
-    constructor() {
+    constructor(levelManager) {
         super();
-        this.state = new Phase1();
-        this.state.enterState(this);
+        this.levelManager = levelManager;
         this.useCollision = false;
         this.projectileSpeed = 25;
 
@@ -19,10 +18,12 @@ export class BossEnemy extends BaseEnemy {
         this.fireTimer = this.fireCooldown;
         this.fleeRange = 10;
         this.range = 100; // the boss will always shoot at the player unless they are very far away somehow
-        this.maxHealth = 200;
+        this.maxHealth = 50;
         this.health = this.maxHealth;
         this.size = 3;
-        this.gameObject.scale.set(3, 3, 3); // Triples the size
+        this.gameObject.scale.set(this.size, this.size, this.size); // Triples the size
+        this.state = new Phase1();
+        this.state.enterState(this);
     }
 
 
@@ -93,9 +94,9 @@ export class Phase1 extends State {
 
         // Spawns two turret enemies to the left and right of the boss
         let spawnPosition = enemy.location.clone().add(new THREE.Vector3(-5, 0, 0));
-        instantiateEnemy(turret, spawnPosition)
+        enemy.levelManager.instantiateEnemy('turret', spawnPosition)
         spawnPosition = enemy.location.clone().add(new THREE.Vector3(5, 0, 0));
-        instantiateEnemy(turret, spawnPosition)
+        enemy.levelManager.instantiateEnemy('turret', spawnPosition)
 
         console.log("Phase1");
     }  
@@ -121,7 +122,7 @@ export class Phase1 extends State {
         }
 
         if (distance < enemy.fleeRange) {
-            let steer = enemy.flee(path);
+            let steer = enemy.flee(player.location);
             enemy.applyForce(steer);
         }
         else if (distance < 60) {
@@ -144,15 +145,15 @@ export class Phase2 extends State {
 
         // Spawns two turret enemies above and under the boss
         let spawnPosition = enemy.location.clone().add(new THREE.Vector3(0, 0, -5));
-        instantiateEnemy('turret', spawnPosition)
+        enemy.levelManager.instantiateEnemy('turret', spawnPosition)
         spawnPosition = enemy.location.clone().add(new THREE.Vector3(0, 0, 5));
-        instantiateEnemy('turret', spawnPosition)
+        enemy.levelManager.instantiateEnemy('turret', spawnPosition)
 
         // Spawns two chasing enemies to the left and right of the boss
         spawnPosition = enemy.location.clone().add(new THREE.Vector3(5, 0, 0));
-        instantiateEnemy('chasing', spawnPosition)
+        enemy.levelManager.instantiateEnemy('chasing', spawnPosition)
         spawnPosition = enemy.location.clone().add(new THREE.Vector3(-5, 0, 0));
-        instantiateEnemy('chasing', spawnPosition)
+        enemy.levelManager.instantiateEnemy('chasing', spawnPosition)
 
 
         console.log("Phase2");
@@ -179,7 +180,7 @@ export class Phase2 extends State {
         }
 
         if (distance < enemy.fleeRange) {
-            let steer = enemy.flee(path);
+            let steer = enemy.flee(player.location);
             enemy.applyForce(steer);
         }
         else if (distance < 40) { // more aggression
@@ -201,30 +202,30 @@ export class Phase3 extends State {
 
         // Spawns four turret enemies above, under, left and right of the boss
         let spawnPosition = enemy.location.clone().add(new THREE.Vector3(0, 0, -5));
-        instantiateEnemy('turret', spawnPosition)
+        enemy.levelManager.instantiateEnemy('turret', spawnPosition)
 
         spawnPosition = enemy.location.clone().add(new THREE.Vector3(0, 0, 5));
-        instantiateEnemy('turret', spawnPosition)
+        enemy.levelManager.instantiateEnemy('turret', spawnPosition)
 
         spawnPosition = enemy.location.clone().add(new THREE.Vector3(-5, 0, 0));
-        instantiateEnemy('turret', spawnPosition)
+        enemy.levelManager.instantiateEnemy('turret', spawnPosition)
 
         spawnPosition = enemy.location.clone().add(new THREE.Vector3(-5, 0, 0));
-        instantiateEnemy('turret', spawnPosition)
+        enemy.levelManager.instantiateEnemy('turret', spawnPosition)
 
         // Spawns two chasing enemies to the bottom left and bottom right of the boss
         spawnPosition = enemy.location.clone().add(new THREE.Vector3(-5, 0, 5));
-        instantiateEnemy('chasing', spawnPosition)
+        enemy.levelManager.instantiateEnemy('chasing', spawnPosition)
 
         spawnPosition = enemy.location.clone().add(new THREE.Vector3(5, 0, 5));
-        instantiateEnemy('chasing', spawnPosition)
+        enemy.levelManager.instantiateEnemy('chasing', spawnPosition)
 
         // Spawns two phantom enemies to the top left and top right of the boss
         spawnPosition = enemy.location.clone().add(new THREE.Vector3(-5, 0, -5));
-        instantiateEnemy('phantom', spawnPosition)
+        enemy.levelManager.instantiateEnemy('phantom', spawnPosition)
 
         spawnPosition = enemy.location.clone().add(new THREE.Vector3(5, 0, -5));
-        instantiateEnemy('phantom', spawnPosition)
+        enemy.levelManager.instantiateEnemy('phantom', spawnPosition)
 
         console.log("Phase3");
     }
@@ -252,7 +253,7 @@ export class Phase3 extends State {
         else if (distance < 20) { // more aggression
             let steer = enemy.seek(player.location);
             enemy.applyForce(steer);
-        };
+        }
     }
 
 }

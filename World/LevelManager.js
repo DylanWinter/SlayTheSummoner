@@ -5,6 +5,7 @@ import {BaseEnemy} from "../Characters/BaseEnemy";
 import {ChasingEnemy} from "../Characters/ChasingEnemy";
 import {TurretEnemy} from "../Characters/TurretEnemy";
 import {PhantomEnemy} from "../Characters/PhantomEnemy";
+import {BossEnemy} from "../Characters/BossEnemy";
 
 
 export class LevelManager {
@@ -14,7 +15,7 @@ export class LevelManager {
     this.nextLevel = 0;
 
     this.levels = [
-      {type: 'default', groundColor: 0xDDDDDD, obstacleColor: 0x555555, enemies: ['chasing', 'turret', 'phantom']},
+      {type: 'boss', groundColor: 0xDDDDDD, obstacleColor: 0x555555, enemies: ['boss']},
       {type: 'default', groundColor: 0x4169e1, obstacleColor: 0xDC143C, enemies: []},
       {type: 'default', groundColor: 0xDDDDDD, obstacleColor: 0x555555, enemies: []},
       {type: 'boss', groundColor: 0xDDDDDD, obstacleColor: 0x555555, enemies: []},
@@ -28,7 +29,7 @@ export class LevelManager {
       this.gameMap = new GameMap(levelInfo.groundColor, levelInfo.obstacleColor);
     }
     else if (levelInfo.type === 'boss') {
-      console.log("Boss fight!");
+      this.gameMap = new GameMap(levelInfo.groundColor, levelInfo.obstacleColor, 150, 150, false);
     }
     this.scene.add(this.gameMap.gameObject);
   }
@@ -69,6 +70,7 @@ export class LevelManager {
         break;
       case 'boss':
         enemy = new BossEnemy(this);
+        break;
       default:
         console.log("Invalid enemy type in instantiateEnemies:", type);
         break;

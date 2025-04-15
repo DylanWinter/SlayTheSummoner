@@ -17,15 +17,21 @@ export class CaveGenerator {
 
 
   // Generate
-  generate(numIterations, density) {
+  generate(numIterations, density, onlyEdges = false) {
     while (true) {
 
       // Initialize our grid
       let grid = this.initGrid(density);
-    
-      // apply numIterations on our CA grid
-      for (let i = 0; i < numIterations; i++) {
-        grid = this.applyCA(grid);
+
+      if (onlyEdges) {
+        // used to create boss arena
+        grid = this.createEdgesOnly(grid);
+      }
+      else {
+        // apply numIterations on our CA grid
+        for (let i = 0; i < numIterations; i++) {
+          grid = this.applyCA(grid);
+        }
       }
 
       // Create nodes and edges
@@ -63,6 +69,27 @@ export class CaveGenerator {
 
     }
     return grid;
+  }
+
+  createEdgesOnly(grid) {
+    let nextGrid = [];
+    // iterate over cols
+    for (let i = 0; i < this.graph.cols; i++) {
+      let col = [];
+      // iterate over rows
+      for (let j = 0; j < this.graph.rows; j++) {
+        let newCell = 0;
+        if (i === 0 ||  j === 0) {
+          newCell = 1;
+        }
+        if (i === this.graph.cols - 1 || j === this.graph.rows - 1) {
+          newCell = 1;
+        }
+        col.push(newCell);
+      }
+      nextGrid.push(col);
+    }
+    return nextGrid;
   }
 
   // Perform one iteration of our CA rules

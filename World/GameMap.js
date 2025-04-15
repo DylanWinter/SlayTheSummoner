@@ -7,15 +7,15 @@ import { Path } from './Path.js';
 export class GameMap {
 
   // Constructor for our GameMap class
-  constructor(groundColor=0xDDDDDD, obstacleColor=0x555555) {
+  constructor(groundColor=0xDDDDDD, obstacleColor=0x555555, sizeX=300, sizeZ=300, genTerrain=true) {
 
     this.projectiles = [];
     this.enemies = [];
 
     // Initialize bounds in here!
     this.bounds = new THREE.Box3(
-      new THREE.Vector3(-150,0,-100), // scene min
-      new THREE.Vector3(150,0,100) // scene max
+      new THREE.Vector3(-(sizeX/2),0,-(sizeZ/2)), // scene min
+      new THREE.Vector3(sizeX/2,0,sizeZ/2) // scene max
     );
 
     // worldSize is a Vector3 with 
@@ -37,7 +37,12 @@ export class GameMap {
 
     // Put our cave generator here!
     let caveGenerator = new CaveGenerator(this.mapGraph);
-    caveGenerator.generate(10, 0.35);
+    if (genTerrain) {
+      caveGenerator.generate(10, 0.35);
+    }
+    else {
+      caveGenerator.generate(1, 0, true);
+    }
 
 
     // Create our map renderer
