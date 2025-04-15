@@ -41,8 +41,6 @@ export class Player {
         if (gltf.animations && gltf.animations.length > 0) {
           this.mixer = new THREE.AnimationMixer(this.mesh);
         }
-
-        console.log(gltf.animations)
         this.idleAnim = this.mixer.clipAction(gltf.animations[36]);
         this.fireAnim = this.mixer.clipAction(gltf.animations[6])
         this.runAnim = this.mixer.clipAction(gltf.animations[48])

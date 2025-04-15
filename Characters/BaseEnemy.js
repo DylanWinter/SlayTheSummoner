@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { VectorUtil } from '../Utils/VectorUtil.js';
 import { State } from '../World/State.js';
 import {Vector3} from "three";
+import {GLTFLoader} from "three/addons";
 
 
 export class BaseEnemy {
@@ -12,11 +13,10 @@ export class BaseEnemy {
     // Creating a game object for our BaseEnemy
     let geo = new THREE.SphereGeometry(this.size);
     let mat = new THREE.MeshStandardMaterial({color: "red"});
-    let mesh = new THREE.Mesh(geo, mat);
-    mesh.rotation.x = Math.PI/2;
+    this.mesh = new THREE.Mesh(geo, mat);
 
     this.gameObject = new THREE.Group();
-    this.gameObject.add(mesh);
+    this.gameObject.add(this.mesh);
 
     this.location = new THREE.Vector3(0,0,0);
     this.velocity = new THREE.Vector3(0,0,0);
@@ -33,7 +33,34 @@ export class BaseEnemy {
     this.isAlive = true;
 
     this.pathPoint = 0;
-    
+  }
+
+  loadModel(modelPath, material=null) {
+    const loader = new GLTFLoader();
+    loader.load(
+      modelPath,
+      (gltf) => {
+        this.gameObject.remove(this.mesh);
+        this.mesh = gltf.scene;
+        if (material) {
+          this.mesh.traverse((child) => {
+            if (child.isMesh) {
+              child.material = material
+            }
+          });
+        }
+        this.gameObject.add(this.mesh);
+        if (gltf.animations && gltf.animations.length > 0) {
+          this.mixer = new THREE.AnimationMixer(this.mesh);
+        }
+        this.runAnim = this.mixer.clipAction(gltf.animations[90])
+        this.runAnim.play();
+      },
+      undefined,
+      (error) => {
+        console.error('Error while loading player model:', error);
+      }
+    );
   }
 
 
@@ -41,6 +68,9 @@ export class BaseEnemy {
   update(deltaTime, player, gameMap) {
     if (!this.isAlive) {
       return;
+    }
+    if (this.mixer) {
+      this.mixer.update(deltaTime);
     }
     this.gameObject.position.copy(this.location);
   }
