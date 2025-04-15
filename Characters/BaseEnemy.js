@@ -27,6 +27,7 @@ export class BaseEnemy {
     this.mass = 1;
     this.maxForce = 15;
     this.size = 1;
+    this.wanderAngle = Math.random() * (Math.PI*2);
 
     this.health = 3;
     this.isAlive = true;
@@ -160,6 +161,28 @@ export class BaseEnemy {
 
     return steer;
 
+  }
+
+  // Wander steering behaviour
+  wander() {
+
+    let distance = 10;
+    let radius = 10;
+    let angleOffset = 0.3;
+
+    let futureLocation = this.velocity.clone();
+    futureLocation.setLength(distance);
+    futureLocation.add(this.location);
+    
+    let target = new THREE.Vector3(radius*Math.sin(this.wanderAngle), 0, radius*Math.cos(this.wanderAngle));
+    target.add(futureLocation);
+  
+    let steer = this.seek(target);
+
+    let change = Math.random() * (angleOffset*2) - angleOffset;
+    this.wanderAngle = this.wanderAngle + change;
+    
+    return steer;
   }
 
 
