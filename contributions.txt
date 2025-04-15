@@ -19,3 +19,4 @@ Joel:
   • UI implementation with Player
   • Final boss
   • Death and victory screen implementation
+  • MapNode implementation (ground/obstacle/exit node)
