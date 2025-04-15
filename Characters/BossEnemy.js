@@ -24,6 +24,8 @@ export class BossEnemy extends BaseEnemy {
         this.gameObject.scale.set(this.size, this.size, this.size); // Triples the size
         this.state = new Phase1();
         this.state.enterState(this);
+
+        this.loadModel("Assets/Skeleton_Mage.glb");
     }
 
 
@@ -91,12 +93,6 @@ export class Phase1 extends State {
 
     enterState(enemy) {
         enemy.useCollision = true;
-
-        // Spawns two turret enemies to the left and right of the boss
-        let spawnPosition = enemy.location.clone().add(new THREE.Vector3(-5, 0, 0));
-        enemy.levelManager.instantiateEnemy('turret', spawnPosition)
-        spawnPosition = enemy.location.clone().add(new THREE.Vector3(5, 0, 0));
-        enemy.levelManager.instantiateEnemy('turret', spawnPosition)
 
         console.log("Phase1");
     }  

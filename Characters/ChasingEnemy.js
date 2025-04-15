@@ -17,8 +17,10 @@ export class ChasingEnemy extends BaseEnemy {
 
         this.fireCooldown = 1;
         this.fireTimer = this.fireCooldown;
-        this.fleeRange = 5;
+        this.fleeRange = 20;
         this.range = 35;
+
+        this.loadModel("Assets/Skeleton_Rogue.glb");
     }
 
 
@@ -121,7 +123,7 @@ export class PathingToPlayer extends State {
         }
 
         // Switch to wander state if the player is too far away
-        else if (distance > enemy.range) {
+        else if (distance > enemy.range * 3) {
             enemy.switchState(new Wandering());
         }
         
