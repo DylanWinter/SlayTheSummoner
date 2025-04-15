@@ -17,9 +17,10 @@ export class BossEnemy extends BaseEnemy {
 
         this.fireCooldown = 1;
         this.fireTimer = this.fireCooldown;
+        this.fleeRange = 10;
         this.range = 100; // the boss will always shoot at the player unless they are very far away somehow
         this.maxHealth = 200;
-        this.health = 200;
+        this.health = this.maxHealth;
         this.size = 3;
         this.gameObject.scale.set(3, 3, 3); // Triples the size
     }
@@ -119,11 +120,11 @@ export class Phase1 extends State {
             }
         }
 
-        if (distance < 10) {
+        if (distance < enemy.fleeRange) {
             let steer = enemy.flee(path);
             enemy.applyForce(steer);
         }
-        else if (distance < 50) {
+        else if (distance < 60) {
             let steer = enemy.seek(player.location);
             enemy.applyForce(steer);
         }
@@ -177,11 +178,11 @@ export class Phase2 extends State {
             }
         }
 
-        if (distance < 10) {
+        if (distance < enemy.fleeRange) {
             let steer = enemy.flee(path);
             enemy.applyForce(steer);
         }
-        else if (distance < 20) { // more aggression
+        else if (distance < 40) { // more aggression
             let steer = enemy.seek(player.location);
             enemy.applyForce(steer);
         };
@@ -244,11 +245,11 @@ export class Phase3 extends State {
             }
         }
 
-        if (distance < 5) { // will get very close
+        if (distance < enemy.fleeRange / 2) { // will get very close
             let steer = enemy.flee(path);
             enemy.applyForce(steer);
         }
-        else if (distance < 20) {
+        else if (distance < 20) { // more aggression
             let steer = enemy.seek(player.location);
             enemy.applyForce(steer);
         };
