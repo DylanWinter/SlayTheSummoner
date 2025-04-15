@@ -63,7 +63,7 @@ export class MapRenderer {
     for (let i = 0; i < nodeList.length; i++) {
       let node = nodeList[i];
 
-      let elevation = (node.type === MapNode.Type.Obstacle) ? 4 : 0;
+      let elevation = (node.type === MapNode.Type.Obstacle) ? 1.5 : 0;
 
       // Get translation
       let x = minX + node.i * tileSize + half;
