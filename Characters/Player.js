@@ -20,6 +20,8 @@ export class Player {
     this.health = this.maxHealth;
     this.strength = 1; // determines damage per attack
     this.isAlive = true;
+    this.isInvincible =  false;
+    this.blinkInterval = null;
     this.hasFoundExit = false;
     this.projectileSpeed = 40;
     this.hitboxSize = 0.75;
@@ -145,6 +147,8 @@ export class Player {
   // --- Player stats manipulation methods --- //
 
   takeDamage(amount) {
+    if (this.isInvincible || !this.isAlive) return;
+
     this.health -= amount;
     this.ui.updateUI();
 
@@ -153,6 +157,15 @@ export class Player {
       "color: red; font-weight: bold;",
       "color: white;"
     );
+
+    // Sets invincibility for 1 second and causes character to blink
+    this.isInvincible = true;
+    this.startBlinking();
+    
+    setTimeout(() => {
+      this.isInvincible = false;
+      this.stopBlinking();
+    }, 1000); //
 
     if (this.health <= 0) {
       this.health = 0;
@@ -204,6 +217,26 @@ export class Player {
       this.strength = 1;
       this.ui.updateUI();
     }
+  }
+
+  // Causes the character to blink while invincible
+  startBlinking() {
+    if (!this.mesh) return;
+  
+    let visible = true;
+    this.blinkInterval = setInterval(() => {
+      visible = !visible;
+      this.mesh.visible = visible;
+    }, 100);
+  }
+  
+
+  stopBlinking() {
+    if (!this.mesh) return;
+  
+    clearInterval(this.blinkInterval);
+    this.blinkInterval = null;
+    this.mesh.visible = true;
   }
 
 }
