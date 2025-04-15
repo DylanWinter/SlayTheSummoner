@@ -163,6 +163,7 @@ export class Player {
     }
   }
 
+  
   die() {
 
     // Creates a death screen that resets the game after 5 seconds
@@ -173,21 +174,6 @@ export class Player {
     setTimeout(() => {
       window.location.reload();
     }, 5000)
-  }
-
-
-  getStrength() {
-    return this.strength;
-  }
-
-
-  getMaxhealth() {
-    return this.maxHealth;
-  }
-
-
-  getCurrentHealth() {
-    return this.health;
   }
 
 

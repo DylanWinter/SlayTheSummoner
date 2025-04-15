@@ -78,7 +78,7 @@ export class Item {
             this.isAlive = false;
         }
         else if (this.type == Item.Type.Heal) {
-            if (player.getCurrentHealth == player.getMaxHealth) {
+            if (player.health == player.maxHealth) {
               return; // do nothing if the player is already at full health
             }
             else {
