@@ -17,7 +17,7 @@ export class CaveGenerator {
 
 
   // Generate
-  generate(numIterations, density, onlyEdges = false) {
+  generate(numIterations, density, onlyEdges=false) {
     while (true) {
 
       // Initialize our grid
@@ -41,9 +41,11 @@ export class CaveGenerator {
       this.graph.createEdges();
 
       if (this.validate()) {
-        let ground = this.graph.nodes.filter(n => n.type === MapNode.Type.Ground);
-        let randomNode = ground[Math.floor(Math.random() * ground.length)];
-        randomNode.type = MapNode.Type.Exit;
+        if (!onlyEdges) {
+          let ground = this.graph.nodes.filter(n => n.type === MapNode.Type.Ground);
+          let randomNode = ground[Math.floor(Math.random() * ground.length)];
+          randomNode.type = MapNode.Type.Exit;
+        }
         return;
       }
     }

@@ -7,7 +7,8 @@ import { Path } from './Path.js';
 export class GameMap {
 
   // Constructor for our GameMap class
-  constructor(groundColor=0xDDDDDD, obstacleColor=0x555555, sizeX=300, sizeZ=300, genTerrain=true) {
+  constructor(groundColor=0xDDDDDD, obstacleColor=0x555555,
+              sizeX=300, sizeZ=300, genTerrain=true) {
 
     this.projectiles = [];
     this.enemies = [];
@@ -41,6 +42,7 @@ export class GameMap {
       caveGenerator.generate(10, 0.35);
     }
     else {
+      // generates the boss arena
       caveGenerator.generate(1, 0, true);
     }
 

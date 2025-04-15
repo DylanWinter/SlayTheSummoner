@@ -29,7 +29,8 @@ export class LevelManager {
       this.gameMap = new GameMap(levelInfo.groundColor, levelInfo.obstacleColor);
     }
     else if (levelInfo.type === 'boss') {
-      this.gameMap = new GameMap(levelInfo.groundColor, levelInfo.obstacleColor, 150, 150, false);
+      this.gameMap = new GameMap(levelInfo.groundColor, levelInfo.obstacleColor,
+        150, 150, false);
     }
     this.scene.add(this.gameMap.gameObject);
   }
