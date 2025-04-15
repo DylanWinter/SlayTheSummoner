@@ -10,15 +10,15 @@ export class ChasingEnemy extends BaseEnemy {
 
     constructor() {
         super();
-        this.state = new PathingToPlayer();
+        this.state = new Wandering();
         this.state.enterState(this);
         this.useCollision = false;
         this.projectileSpeed = 25;
 
         this.fireCooldown = 1;
         this.fireTimer = this.fireCooldown;
-        this.fleeRange = 20;
-        this.range = 45;
+        this.fleeRange = 5;
+        this.range = 35;
     }
 
 
@@ -71,6 +71,28 @@ export class ChasingEnemy extends BaseEnemy {
 }
 
 
+export class Wandering extends State {
+
+    enterState(enemy) {
+        enemy.useCollision = true;
+        console.log("Wandering");
+    } 
+
+    updateState(enemy, player, gameMap, deltaTime) {
+        let distance = enemy.location.distanceTo(player.location);
+
+        let steer = enemy.wander();
+        enemy.applyForce(steer);
+
+        // Switch to A* pathfinding if the player is close enough
+        if (distance < enemy.range) {
+            enemy.switchState(new PathingToPlayer());
+        }
+    }
+
+}
+
+
 export class PathingToPlayer extends State {
 
     enterState(enemy) {
@@ -82,9 +104,9 @@ export class PathingToPlayer extends State {
     updateState(enemy, player, gameMap, deltaTime) {
         let distance = enemy.location.distanceTo(player.location);
 
-        // Changes to evade state if the enemy is too close to the player
+        // Changes to Flee state if the enemy is too close to the player
         if (distance < enemy.fleeRange) {
-            enemy.switchState(new EvadeFromPlayer());
+            enemy.switchState(new FleeFromPlayer());
         }
 
         // Shoot at the enemy if they are within a certain distance
@@ -98,9 +120,13 @@ export class PathingToPlayer extends State {
             }
         }
 
-        // A* should be called in main to avoid inefficiency of every enemy calling it
-        // path will be passed to each NPC via update
+        // Switch to wander state if the player is too far away
+        else if (distance > enemy.range) {
+            enemy.switchState(new Wandering());
+        }
+        
 
+        // A* Pathfinding
         // Create a start and end for the path
         let start = gameMap.quantize(enemy.location);
         let end = gameMap.quantize(player.location);
@@ -115,19 +141,19 @@ export class PathingToPlayer extends State {
 }
 
 
-export class EvadeFromPlayer extends State {
+export class FleeFromPlayer extends State {
 
     enterState(enemy) {
         enemy.useCollision = true;
-        console.log("EvadeFromPlayer");
+        console.log("FleeFromPlayer");
     }
 
 
     updateState(enemy, player, gameMap, deltaTime) {
         let distance = enemy.location.distanceTo(player.location);
+
         // Changes to A* pathfinding state if the enemy is too far away from the player
         if (distance > enemy.fleeRange) {
-
             enemy.switchState(new PathingToPlayer());
         }
 
