@@ -13,7 +13,7 @@ export class TurretEnemy extends BaseEnemy {
         this.state = new ScanningForPlayer();
         this.state.enterState(this);
         this.useCollision = false;
-        this.range = 150;
+        this.range = 55;
 
         this.projectileSpeed = 25;
         this.fireCooldown = 0.4;
