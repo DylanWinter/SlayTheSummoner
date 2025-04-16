@@ -1,22 +1,18 @@
 Dylan:
-  • Player movement
-  • Camera movement
+  • Controls, player movement and camera
   •	Procedural generation of environment
   •	Projectiles
-  • Hit detection
-  • Collision detection
-  • Visuals/models
-
+  • Collision and hit detection
+  • Models and textures
+  • Animations
+  • Level management
 
 Joel:
-  • Enemy NPCs' logic
-    - State machines
-    - A* Pathfinding
-    - NPC movement and NPC movement algorithms (seek, flee, wander)
+  • State machines
+  • A* Pathfinding
+  • Simple movement algorithms (seek, flee, wander)
+  • Items
+  • UI
+  • Final boss AI
+  • Death and victory screens
 
-  • Player stats
-  • Items (strength boost, max health boost, heal)
-  • UI implementation with Player
-  • Final boss
-  • Death and victory screen implementation
-  • README
