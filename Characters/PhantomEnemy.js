@@ -18,6 +18,7 @@ export class PhantomEnemy extends BaseEnemy {
         this.fireTimer = this.fireCooldown;
         this.topSpeed = 5;
         this.damage = 1;
+        this.health = 7;
         this.loadModel("Assets/Phantom.glb", new THREE.MeshStandardMaterial({
             color: "black",
             transparent: true,
