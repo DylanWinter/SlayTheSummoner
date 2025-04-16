@@ -1,7 +1,7 @@
 Dylan:
   • Controls, player movement and camera
-  •	Procedural generation of environment
-  •	Projectiles
+  • Procedural generation of environment
+  • Projectiles
   • Collision and hit detection
   • Models and textures
   • Animations
