@@ -139,14 +139,8 @@ export class Phase2 extends State {
         enemy.topSpeed = 35;
         enemy.maxForce = 30;
 
-        // Spawns two turret enemies above and under the boss
-        let spawnPosition = enemy.location.clone().add(new THREE.Vector3(0, 0, -5));
-        enemy.levelManager.instantiateEnemy('turret', spawnPosition)
-        spawnPosition = enemy.location.clone().add(new THREE.Vector3(0, 0, 5));
-        enemy.levelManager.instantiateEnemy('turret', spawnPosition)
-
         // Spawns two chasing enemies to the left and right of the boss
-        spawnPosition = enemy.location.clone().add(new THREE.Vector3(5, 0, 0));
+        let spawnPosition = enemy.location.clone().add(new THREE.Vector3(5, 0, 0));
         enemy.levelManager.instantiateEnemy('chasing', spawnPosition)
         spawnPosition = enemy.location.clone().add(new THREE.Vector3(-5, 0, 0));
         enemy.levelManager.instantiateEnemy('chasing', spawnPosition)
@@ -196,21 +190,8 @@ export class Phase3 extends State {
         enemy.topSpeed = 70;
         enemy.maxForce = 60;
 
-        // Spawns four turret enemies above, under, left and right of the boss
-        let spawnPosition = enemy.location.clone().add(new THREE.Vector3(0, 0, -5));
-        enemy.levelManager.instantiateEnemy('turret', spawnPosition)
-
-        spawnPosition = enemy.location.clone().add(new THREE.Vector3(0, 0, 5));
-        enemy.levelManager.instantiateEnemy('turret', spawnPosition)
-
-        spawnPosition = enemy.location.clone().add(new THREE.Vector3(-5, 0, 0));
-        enemy.levelManager.instantiateEnemy('turret', spawnPosition)
-
-        spawnPosition = enemy.location.clone().add(new THREE.Vector3(-5, 0, 0));
-        enemy.levelManager.instantiateEnemy('turret', spawnPosition)
-
         // Spawns two chasing enemies to the bottom left and bottom right of the boss
-        spawnPosition = enemy.location.clone().add(new THREE.Vector3(-5, 0, 5));
+        let spawnPosition = enemy.location.clone().add(new THREE.Vector3(-5, 0, 5));
         enemy.levelManager.instantiateEnemy('chasing', spawnPosition)
 
         spawnPosition = enemy.location.clone().add(new THREE.Vector3(5, 0, 5));

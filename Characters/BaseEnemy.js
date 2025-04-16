@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import { VectorUtil } from '../Utils/VectorUtil.js';
-import { State } from '../World/State.js';
 import {Vector3} from "three";
 import {GLTFLoader} from "three/addons";
 

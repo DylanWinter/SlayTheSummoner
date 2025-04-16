@@ -13,11 +13,13 @@ export class TurretEnemy extends BaseEnemy {
         this.state = new ScanningForPlayer();
         this.state.enterState(this);
         this.useCollision = false;
-        this.range = 55;
+        this.range = 35;
 
         this.projectileSpeed = 25;
         this.fireCooldown = 0.4;
         this.fireTimer = this.fireCooldown;
+
+        this.loadModel('Assets/Skeleton_Minion.glb');
     }
 
 
@@ -37,6 +39,8 @@ export class TurretEnemy extends BaseEnemy {
         let proj = new Projectile(this.location, direction, this.projectileSpeed, false);
         gameMap.gameObject.parent.add(proj.gameObject);
         gameMap.projectiles.push(proj);
+        let angle = Math.atan2(direction.x, direction.z);
+        this.gameObject.rotation.y = angle;
     }
 
 }
