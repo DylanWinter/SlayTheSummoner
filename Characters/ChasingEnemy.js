@@ -104,7 +104,6 @@ export class Wandering extends State {
 export class PathingToPlayer extends State {
 
     enterState(enemy) {
-        enemy.useCollision = false;
         console.log("PathingToPlayer");
     }  
 
@@ -144,6 +143,7 @@ export class PathingToPlayer extends State {
 
         let steer = enemy.simpleFollow(path);
         enemy.applyForce(steer);
+        this.useCollision = false;
     }
     
 }
