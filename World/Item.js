@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {GLTFLoader} from "three/addons";
 
 
 export class Item {
@@ -11,6 +12,7 @@ export class Item {
 
   // To create an item to use in our scene
   constructor(type) {
+    this.gameObject = new THREE.Group();
 
     this.radius = 0.7;
 
@@ -37,11 +39,32 @@ export class Item {
         console.log("Invalid item type: " + type);
     }
 
-    // Initialize the game object
-    let geometry = new THREE.SphereGeometry(this.radius, 16, 16);
+    this.loadModel();
+  }
+
+  loadModel() {
+    const loader = new GLTFLoader();
     let material = new THREE.MeshStandardMaterial({color: this.color});
-    this.gameObject = new THREE.Mesh(geometry, material);
-    
+    loader.load(
+      "Assets/bottle_C_brown.gltf",
+      (gltf) => {
+        this.gameObject.remove(this.mesh);
+        this.mesh = gltf.scene;
+        // Apply material if given
+        if (material) {
+          this.mesh.traverse((child) => {
+            if (child.isMesh) {
+              child.material = material
+            }
+          });
+        }
+        this.gameObject.add(this.mesh);
+      },
+      undefined,
+      (error) => {
+        console.error('Error while loading player model:', error);
+      }
+    );
   }
 
   // To update our enemy
