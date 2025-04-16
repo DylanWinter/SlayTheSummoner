@@ -251,7 +251,7 @@ export class BaseEnemy {
     }
 
     if (item) {
-      item.location = this.location.clone();
+      item.setLocation(this.location.clone());
       this.gameMap.items.push(item);
       this.gameObject.parent.add(item.gameObject);
     }

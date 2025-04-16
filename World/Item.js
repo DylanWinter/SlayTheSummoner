@@ -60,6 +60,7 @@ export class Item {
     this.gameObject.position.copy(this.location);
   }
 
+  // Checks distance to player, provides buff if within range
   onPickup(player) {
     let distance = this.location.distanceTo(player.location);
 
@@ -68,14 +69,12 @@ export class Item {
             player.changeStrength(1);
 
             this.gameObject.parent.remove(this.gameObject); // remove the item after it is picked up
-            this.isAlive = false;
         }
         else if (this.type === Item.Type.MaxHealthUp) {
             player.changeMaxHealth(1);
             player.heal(1);
 
             this.gameObject.parent.remove(this.gameObject);
-            this.isAlive = false;
         }
         else if (this.type === Item.Type.Heal) {
             if (player.health < player.maxHealth) {
@@ -83,8 +82,7 @@ export class Item {
             }
 
         }
-
-
+      this.isAlive = false;
     }
   }
 
