@@ -17,9 +17,22 @@ export class MapRenderer {
   // To create the actual game object
   // associated with our GameMap
   createRendering() {
+    const textureLoader = new THREE.TextureLoader();
+    const groundTex = textureLoader.load("Assets/stacked-stones.jpg");
+    groundTex.wrapS = THREE.RepeatWrapping;
+    groundTex.wrapT = THREE.RepeatWrapping;
+    groundTex.repeat.set(0.5, 0.5);
+    groundTex.anisotropy = 4;
+    const wallTex = textureLoader.load("Assets/878.jpg");
+    wallTex.wrapS = THREE.RepeatWrapping;
+    wallTex.wrapT = THREE.RepeatWrapping;
+    wallTex.repeat.set(0.5, 0.5);
+    groundTex.anisotropy = 4;
 
-    let groundMaterial = new THREE.MeshStandardMaterial({ color: this.groundColor, flatShading: true });
-    let obstacleMaterial = new THREE.MeshStandardMaterial({ color: this.obstacleColor, flatShading: true });
+    let groundMaterial = new THREE.MeshStandardMaterial(
+      { map: groundTex, color: this.groundColor, flatShading: true });
+    let obstacleMaterial = new THREE.MeshStandardMaterial({
+      map: wallTex, color: this.obstacleColor, flatShading: true });
     let exitMaterial = new THREE.MeshStandardMaterial({ color: this.exitColor, flatShading: true });
   
     // Group nodes by type

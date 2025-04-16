@@ -1,5 +1,3 @@
-import * as THREE from 'three';
-import { VectorUtil } from '../Utils/VectorUtil.js';
 import { GameMap } from "./GameMap";
 import {BaseEnemy} from "../Characters/BaseEnemy";
 import {ChasingEnemy} from "../Characters/ChasingEnemy";
@@ -15,7 +13,7 @@ export class LevelManager {
     this.nextLevel = 0;
 
     this.levels = [
-      {type: 'boss', groundColor: 0xDDDDDD, obstacleColor: 0x555555, enemies: ['phantom', "phantom"]},
+      {type: 'default', groundColor: 0xFFFFFF, obstacleColor: 0x555555, enemies: ['chasing', 'chasing', 'chasing']},
       {type: 'default', groundColor: 0x4169e1, obstacleColor: 0xDC143C, enemies: []},
       {type: 'default', groundColor: 0xDDDDDD, obstacleColor: 0x555555, enemies: []},
       {type: 'boss', groundColor: 0xDDDDDD, obstacleColor: 0x555555, enemies: []},
