@@ -121,7 +121,7 @@ export class Phase1 extends State {
             let steer = enemy.flee(player.location);
             enemy.applyForce(steer);
         }
-        else if (distance < 60) {
+        else if (distance > 30) {
             let steer = enemy.seek(player.location);
             enemy.applyForce(steer);
         }
@@ -135,9 +135,9 @@ export class Phase2 extends State {
     enterState(enemy) {
 
         // Boss fires faster and moves faster
-        this.fireCooldown = 0.75;
-        enemy.topSpeed = 20;
-        enemy.maxForce = 25;
+        enemy.fireCooldown = 0.75;
+        enemy.topSpeed = 35;
+        enemy.maxForce = 30;
 
         // Spawns two turret enemies above and under the boss
         let spawnPosition = enemy.location.clone().add(new THREE.Vector3(0, 0, -5));
@@ -179,7 +179,7 @@ export class Phase2 extends State {
             let steer = enemy.flee(player.location);
             enemy.applyForce(steer);
         }
-        else if (distance < 40) { // more aggression
+        else if (distance > 20) { // more aggression
             let steer = enemy.seek(player.location);
             enemy.applyForce(steer);
         };
@@ -192,9 +192,9 @@ export class Phase2 extends State {
 export class Phase3 extends State {
 
     enterState(enemy) {
-        this.fireCooldown = 0.25;
-        enemy.topSpeed = 40;
-        enemy.maxForce = 35;
+        enemy.fireCooldown = 0.25;
+        enemy.topSpeed = 70;
+        enemy.maxForce = 60;
 
         // Spawns four turret enemies above, under, left and right of the boss
         let spawnPosition = enemy.location.clone().add(new THREE.Vector3(0, 0, -5));
@@ -246,7 +246,7 @@ export class Phase3 extends State {
             let steer = enemy.flee(path);
             enemy.applyForce(steer);
         }
-        else if (distance < 20) { // more aggression
+        else if (distance > 15) { // more aggression
             let steer = enemy.seek(player.location);
             enemy.applyForce(steer);
         }

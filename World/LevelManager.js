@@ -15,7 +15,7 @@ export class LevelManager {
     this.nextLevel = 0;
 
     this.levels = [
-      {type: 'boss', groundColor: 0xDDDDDD, obstacleColor: 0x555555, enemies: ['phantom', "phantom"]},
+      {type: 'boss', groundColor: 0xDDDDDD, obstacleColor: 0x555555, enemies: ['boss']},
       {type: 'default', groundColor: 0x4169e1, obstacleColor: 0xDC143C, enemies: []},
       {type: 'default', groundColor: 0xDDDDDD, obstacleColor: 0x555555, enemies: []},
       {type: 'boss', groundColor: 0xDDDDDD, obstacleColor: 0x555555, enemies: []},
