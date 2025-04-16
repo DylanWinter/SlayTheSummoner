@@ -19,7 +19,7 @@ export class ChasingEnemy extends BaseEnemy {
         this.fireTimer = this.fireCooldown;
         this.fleeRange = 15;
         this.range = 35;
-        this.health = 4;
+        this.health = 10;
 
         this.loadModel("Assets/Skeleton_Rogue.glb");
     }

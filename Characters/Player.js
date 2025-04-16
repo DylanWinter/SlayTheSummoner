@@ -18,7 +18,7 @@ export class Player {
     this.moveSpeed = 25;
     this.maxHealth = 3;
     this.health = this.maxHealth;
-    this.strength = 1; // determines damage per attack
+    this.strength = 2; // determines damage per attack
     this.isAlive = true;
     this.isInvincible =  false;
     this.blinkInterval = null;

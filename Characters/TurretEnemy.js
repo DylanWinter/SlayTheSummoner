@@ -18,7 +18,7 @@ export class TurretEnemy extends BaseEnemy {
         this.projectileSpeed = 25;
         this.fireCooldown = 0.4;
         this.fireTimer = this.fireCooldown;
-        this.health = 8;
+        this.health = 15;
 
         this.loadModel('Assets/Skeleton_Minion.glb');
     }

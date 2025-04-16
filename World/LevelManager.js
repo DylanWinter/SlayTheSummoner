@@ -16,9 +16,9 @@ export class LevelManager {
     this.levels = [
       {type: 'default', groundColor: 0xFFFFFF, obstacleColor: 0x555555, itemAmount: 4,
         enemies: ['phantom', 'phantom','phantom','phantom','phantom', 'turret', 'turret', 'turret']},
-      {type: 'default', groundColor: 0x4169e1, obstacleColor: 0xDC143C, itemAmount: 5,
+      {type: 'default', groundColor: 0xFFFFFF, obstacleColor: 0x222222, itemAmount: 5,
         enemies: ['phantom', 'phantom', 'turret', 'turret', 'turret', 'turret', 'chasing', 'chasing', 'chasing']},
-      {type: 'default', groundColor: 0xDDDDDD, obstacleColor: 0x555555, itemAmount: 6,
+      {type: 'default', groundColor: 0xFFFFFF, obstacleColor: 0x111111, itemAmount: 6,
         enemies: ['phantom', 'phantom', 'phantom', 'chasing', 'chasing', 'chasing', 'chasing', 'chasing', 'chasing', 'chasing']},
       {type: 'boss', groundColor: 0xDDDDDD, obstacleColor: 0x555555,
         enemies: ['boss']},

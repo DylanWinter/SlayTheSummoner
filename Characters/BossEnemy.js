@@ -18,7 +18,7 @@ export class BossEnemy extends BaseEnemy {
         this.fireTimer = this.fireCooldown;
         this.fleeRange = 10;
         this.range = 100; // the boss will always shoot at the player unless they are very far away somehow
-        this.maxHealth = 100;
+        this.maxHealth = 150;
         this.health = this.maxHealth;
         this.size = 3;
         this.gameObject.scale.set(this.size, this.size, this.size); // Triples the size
