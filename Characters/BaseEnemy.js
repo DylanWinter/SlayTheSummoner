@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { VectorUtil } from '../Utils/VectorUtil.js';
 import {Vector3} from "three";
 import {GLTFLoader} from "three/addons";
+import {Item} from "../World/Item";
 
 
 export class BaseEnemy {
@@ -17,24 +18,25 @@ export class BaseEnemy {
     this.gameObject = new THREE.Group();
     this.gameObject.add(this.mesh);
 
-    this.location = new THREE.Vector3(0,0,0);
-    this.velocity = new THREE.Vector3(0,0,0);
-    this.acceleration = new THREE.Vector3(0,0,0);
+    this.location = new THREE.Vector3(0, 0, 0);
+    this.velocity = new THREE.Vector3(0, 0, 0);
+    this.acceleration = new THREE.Vector3(0, 0, 0);
 
-    
+
     this.topSpeed = 10;
     this.mass = 1;
     this.maxForce = 15;
     this.size = 1;
-    this.wanderAngle = Math.random() * (Math.PI*2);
+    this.wanderAngle = Math.random() * (Math.PI * 2);
 
     this.health = 3;
     this.isAlive = true;
 
     this.pathPoint = 0;
+    this.gameMap = null;
   }
 
-  loadModel(modelPath, material=null) {
+  loadModel(modelPath, material = null) {
     const loader = new GLTFLoader();
     loader.load(
       modelPath,
@@ -71,6 +73,9 @@ export class BaseEnemy {
     if (this.mixer) {
       this.mixer.update(deltaTime);
     }
+    if (!this.gameMap) {
+      this.gameMap = gameMap;
+    }
     this.gameObject.position.copy(this.location);
   }
 
@@ -79,10 +84,10 @@ export class BaseEnemy {
   // then returns the coordinates of the next node in the path
   // Simple path follow
   simpleFollow(path) {
-    
+
     // Check to make sure a path exists
     if (path.length() > 0) {
-    
+
       // Getting the distance from our character to the path point
       let distance = this.location.distanceTo(path.get(this.pathPoint));
 
@@ -91,9 +96,9 @@ export class BaseEnemy {
       if (distance < path.radius) {
 
         // If we are at the end of the path, arrive
-        if (this.pathPoint === path.length()-1) {
+        if (this.pathPoint === path.length() - 1) {
           return this.arrive(path.get(this.pathPoint), path.radius);
-          
+
         }
         // otherwise, increment our path point
         this.pathPoint++;
@@ -136,7 +141,7 @@ export class BaseEnemy {
     // Calculate desired velocity
     let desired = VectorUtil.sub(target, this.location);
     desired.setLength(this.topSpeed);
-  
+
     // Calculate steering force
     let steer = VectorUtil.sub(desired, this.velocity);
 
@@ -161,8 +166,7 @@ export class BaseEnemy {
       deceleration.y = 0;
 
       this.applyForce(deceleration);
-    } 
-    else {
+    } else {
       this.stop(); // Fully stop if we're already very slow
     }
 
@@ -181,7 +185,7 @@ export class BaseEnemy {
     desired.multiplyScalar(-1);
 
     let steer = new THREE.Vector3();
-    steer.subVectors(desired, this.velocity);     
+    steer.subVectors(desired, this.velocity);
 
 
     if (steer.length() > this.maxForce) {
@@ -202,15 +206,15 @@ export class BaseEnemy {
     let futureLocation = this.velocity.clone();
     futureLocation.setLength(distance);
     futureLocation.add(this.location);
-    
-    let target = new THREE.Vector3(radius*Math.sin(this.wanderAngle), 0, radius*Math.cos(this.wanderAngle));
+
+    let target = new THREE.Vector3(radius * Math.sin(this.wanderAngle), 0, radius * Math.cos(this.wanderAngle));
     target.add(futureLocation);
-  
+
     let steer = this.seek(target);
 
-    let change = Math.random() * (angleOffset*2) - angleOffset;
+    let change = Math.random() * (angleOffset * 2) - angleOffset;
     this.wanderAngle = this.wanderAngle + change;
-    
+
     return steer;
   }
 
@@ -223,14 +227,26 @@ export class BaseEnemy {
   }
 
   die() {
-    this.dropItem;
+    this.dropItem();
     this.isAlive = false;
     this.gameObject.parent.remove(this.gameObject);
-    console.log("Enemy killed");
   }
 
   dropItem() {
-    return; // add cases for strength/maxHealth upgrade and heal
-  }
+    const chance = Math.random();
+    let item;
+    if (chance < 0.1) {
+      item = new Item(Item.Type.StrengthUp);
+    } else if (chance < 0.2) {
+      item = new Item(Item.Type.MaxHealthUp);
+    } else if (chance < 0.3) {
+      item = new Item(Item.Type.Heal);
+    }
 
+    if (item) {
+      item.location = this.location.clone();
+      this.gameMap.items.push(item);
+      this.gameObject.parent.add(item.gameObject);
+    }
+  }
 }

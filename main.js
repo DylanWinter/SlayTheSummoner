@@ -67,6 +67,8 @@ function loadNextLevel() {
   levelManager.gameMap.projectiles = [];
   levelManager.gameMap.enemies.forEach(enemy => {scene.remove(enemy.gameObject);});
   levelManager.gameMap.enemies = [];
+  levelManager.gameMap.items.forEach(item => {scene.remove(item.gameObject);});
+  levelManager.gameMap.items = [];
   player.hasFoundExit = false;
   levelManager.loadNextLevel();
   if (!levelManager.gameMap.quantize(player.location).isTraversable()) {
@@ -109,6 +111,12 @@ function animate() {
     enemy.update(deltaTime, player, levelManager.gameMap);
   })
   levelManager.gameMap.enemies = levelManager.gameMap.enemies.filter(enemy => enemy.isAlive);
+
+  // Update pickups
+  levelManager.gameMap.items.forEach((item) => {
+    item.update(deltaTime, player, levelManager.gameMap);
+  })
+  levelManager.gameMap.item = levelManager.gameMap.items.filter(enemy => enemy.isAlive);
 
 
   // Move camera

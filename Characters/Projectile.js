@@ -4,13 +4,13 @@ import {distance} from "three/tsl";
 import {GLTFLoader} from "three/addons";
 
 export class Projectile {
-  constructor(position, direction, speed, isFriendly=true) {
+  constructor(position, direction, speed, isFriendly=true, damage=1) {
     this.gameObject = new THREE.Group();
 
     this.location = position;
     this.direction = direction;
     this.speed = speed;
-    this.damage = 1;
+    this.damage = damage;
     this.isFriendly = isFriendly;
 
     this.isAlive = true;

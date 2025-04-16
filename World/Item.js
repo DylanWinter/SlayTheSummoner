@@ -12,8 +12,7 @@ export class Item {
   // To create an item to use in our scene
   constructor(type) {
 
-    // Radius used for testing if we are close to recycloBot
-    this.radius = 3;
+    this.radius = 0.7;
 
     // Set our type
     this.type = type;
@@ -65,25 +64,24 @@ export class Item {
     let distance = this.location.distanceTo(player.location);
 
     if (distance <= this.radius) {
-        if (this.type == Item.Type.StrengthUp) {
+        if (this.type === Item.Type.StrengthUp) {
             player.changeStrength(1);
 
             this.gameObject.parent.remove(this.gameObject); // remove the item after it is picked up
             this.isAlive = false;
         }
-        else if (this.type == Item.Type.MaxHealthUp) {
+        else if (this.type === Item.Type.MaxHealthUp) {
             player.changeMaxHealth(1);
+            player.heal(1);
 
             this.gameObject.parent.remove(this.gameObject);
             this.isAlive = false;
         }
-        else if (this.type == Item.Type.Heal) {
-            if (player.health == player.maxHealth) {
-              return; // do nothing if the player is already at full health
-            }
-            else {
+        else if (this.type === Item.Type.Heal) {
+            if (player.health < player.maxHealth) {
               player.heal(1);
             }
+
         }
 
 

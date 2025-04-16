@@ -12,6 +12,7 @@ export class GameMap {
 
     this.projectiles = [];
     this.enemies = [];
+    this.items = [];
 
     // Initialize bounds in here!
     this.bounds = new THREE.Box3(
@@ -54,13 +55,6 @@ export class GameMap {
     this.gameObject = this.mapRenderer.createRendering();
 
   }
-
-
-  // Returns the mapGraph instance variable
-  getMapGraph() {
-    return this.mapGraph;
-  }
-
 
   // Method to path find with A*
   pathFind(start, end) {

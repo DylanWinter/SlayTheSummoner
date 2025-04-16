@@ -133,7 +133,7 @@ export class Player {
     let direction = (new Vector3(Math.sin(this.gameObject.rotation.y),
       0,
       Math.cos(this.gameObject.rotation.y))).normalize();
-    let proj = new Projectile(this.location, direction, this.projectileSpeed);
+    let proj = new Projectile(this.location, direction, this.projectileSpeed, true, this.strength);
     scene.add(proj.gameObject);
     projArray.push(proj);
     this.fireAnim.setLoop(THREE.LoopOnce);
