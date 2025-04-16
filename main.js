@@ -71,6 +71,9 @@ function loadNextLevel() {
   levelManager.gameMap.items = [];
   player.hasFoundExit = false;
   levelManager.loadNextLevel();
+  if (!levelManager.gameMap.quantize(player.location)) {
+    player.location = new THREE.Vector3(0, 0, 0);
+  }
   if (!levelManager.gameMap.quantize(player.location).isTraversable()) {
     let newNode = levelManager.gameMap.mapGraph.getRandomGroundNode();
     player.location = levelManager.gameMap.localize(newNode);
