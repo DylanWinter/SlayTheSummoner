@@ -67,9 +67,6 @@ export class GameMap {
 
     // For each point in our nodePath, add a localized version to our path
     for (let p of nodePath) {
-      //let highlightedObject = this.mapRenderer.highlight(p, 'yellow');
-      //this.gameObject.add(highlightedObject);
-
       path.points.push(this.localize(p));
     }
     
