@@ -76,6 +76,7 @@ function loadNextLevel() {
     player.location = levelManager.gameMap.localize(newNode);
   }
   levelManager.instantiateEnemies();
+  levelManager.instantiateItems();
   levelManager.incrementNextLevel();
 }
 

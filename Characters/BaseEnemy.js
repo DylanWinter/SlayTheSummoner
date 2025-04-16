@@ -242,12 +242,14 @@ export class BaseEnemy {
   dropItem() {
     const chance = Math.random();
     let item;
-    if (chance < 0.1) {
-      item = new Item(Item.Type.StrengthUp);
-    } else if (chance < 0.2) {
-      item = new Item(Item.Type.MaxHealthUp);
-    } else if (chance < 0.3) {
+    if (chance < 0.4) {
       item = new Item(Item.Type.Heal);
+    } 
+    else if (chance < 0.5) {
+      item = new Item(Item.Type.MaxHealthUp);
+    } 
+    else if (chance <= 0.6) {
+      item = new Item(Item.Type.StrengthUp);
     }
 
     if (item) {

@@ -4,6 +4,7 @@ import {ChasingEnemy} from "../Characters/ChasingEnemy";
 import {TurretEnemy} from "../Characters/TurretEnemy";
 import {PhantomEnemy} from "../Characters/PhantomEnemy";
 import {BossEnemy} from "../Characters/BossEnemy";
+import { Item } from "./Item.js";
 
 
 export class LevelManager {
@@ -13,11 +14,11 @@ export class LevelManager {
     this.nextLevel = 0;
 
     this.levels = [
-      {type: 'default', groundColor: 0xFFFFFF, obstacleColor: 0x555555,
+      {type: 'default', groundColor: 0xFFFFFF, obstacleColor: 0x555555, itemAmount: 4,
         enemies: ['phantom', 'phantom','phantom','phantom','phantom', 'turret', 'turret', 'turret']},
-      {type: 'default', groundColor: 0x4169e1, obstacleColor: 0xDC143C,
+      {type: 'default', groundColor: 0x4169e1, obstacleColor: 0xDC143C, itemAmount: 5,
         enemies: ['phantom', 'phantom', 'turret', 'turret', 'turret', 'turret', 'chasing', 'chasing', 'chasing']},
-      {type: 'default', groundColor: 0xDDDDDD, obstacleColor: 0x555555,
+      {type: 'default', groundColor: 0xDDDDDD, obstacleColor: 0x555555, itemAmount: 6,
         enemies: ['phantom', 'phantom', 'phantom', 'chasing', 'chasing', 'chasing', 'chasing', 'chasing', 'chasing', 'chasing']},
       {type: 'boss', groundColor: 0xDDDDDD, obstacleColor: 0x555555,
         enemies: ['boss']},
@@ -41,7 +42,6 @@ export class LevelManager {
   // Spawns all enemies in the level data
   instantiateEnemies() {
     let enemyData = this.levels[this.nextLevel].enemies;
-    let enemies = [];
     for (let enemyType of enemyData) {
       let enemy = this.instantiateEnemy(enemyType)
     }
@@ -91,5 +91,39 @@ export class LevelManager {
     this.nextLevel += 1;
   }
 
+  // Spawns all items in the level data
+  instantiateItems() {
+    let itemData = this.levels[this.nextLevel].itemAmount;
+    for (let i = 0; i < itemData; i++) {
+      let item = this.instantiateItem()
+    }
+  }
+
+  instantiateItem() {
+    let spawn = this.gameMap.mapGraph.getRandomGroundNode();;
+  
+    // Weighted random selection
+    let rand = Math.random();
+    let type;
+
+    if (rand < 0.5) {
+      type = Item.Type.Heal; // 50% chance of a heal spawning
+    } 
+    else if (rand < 0.75) {
+      type = Item.Type.StrengthUp; // 25% chance of a strengthUp spawning
+    } 
+    else {
+      type = Item.Type.MaxHealthUp; // 25% chance of a maxHealthUp spawning
+    }
+  
+    let item = new Item(type);
+
+    this.gameMap.items.push(item);
+    item.location = this.gameMap.localize(spawn);
+    this.scene.add(item.gameObject);
+
+    return item;
+    }
+  
 
 }

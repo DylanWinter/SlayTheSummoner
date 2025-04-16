@@ -68,21 +68,25 @@ export class Item {
         if (this.type === Item.Type.StrengthUp) {
             player.changeStrength(1);
 
-            this.gameObject.parent.remove(this.gameObject); // remove the item after it is picked up
+            this.gameObject.parent.remove(this.gameObject); // removes the item after it is picked up
+            this.isAlive = false;
         }
         else if (this.type === Item.Type.MaxHealthUp) {
             player.changeMaxHealth(1);
             player.heal(1);
 
             this.gameObject.parent.remove(this.gameObject);
+            this.isAlive = false;
         }
         else if (this.type === Item.Type.Heal) {
             if (player.health < player.maxHealth) {
               player.heal(1);
-            }
 
+              this.gameObject.parent.remove(this.gameObject);
+
+              this.isAlive = false;
+            }
         }
-      this.isAlive = false;
     }
   }
 
