@@ -1,5 +1,5 @@
 # Slay the Summoner - By Joel Hicks and Dylan Winter
-A dungeon crawler/bullet hell game about slaying an evil summoner. Final project for COMP4303 - AI in Computer Games. Written using Three.js.
+A dungeon crawler/top-down shooter game about slaying an evil summoner. Final project for COMP4303 - AI in Computer Games. Written using Three.js.
 
 ## Setup
 
