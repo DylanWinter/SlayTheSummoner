@@ -18,10 +18,11 @@ A dungeon crawler/top-down shooter game about slaying an evil summoner. Final pr
 - Face off against four enemy types: *Phantoms* who will relentlessly chase you through walls, 
   *Skeleton Archers* who will fire arrows from a distance, *Turrets* who do not move but rapidly fire arrows, and of course the mysterious *Summoner* himself. 
 
+- Upgrade and healing items are randomly scattered around the map, and may also be dropped when enemies are defeated.
+  	- Red items will increase your damage, blue items will increase your max health, and green items will heal you.
+  	- Don't neglect exploration, or you may find yourself too weak to fight the final boss!
+  
 - Each level contains a warp to the next level, marked by a green square. You must find it to proceed.
-
-- When enemies are defeated, they may randomly drop upgrade items. Don't neglect exploration, or you may find yourself too weak to fight the final boss!
-  Red items will increase your damage, blue items will increase your max health and green items will heal you. 
 
 
 ## Implemented Topics
