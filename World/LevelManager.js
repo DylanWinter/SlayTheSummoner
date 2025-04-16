@@ -57,6 +57,8 @@ export class LevelManager {
     }
     else {
       spawn = this.gameMap.quantize(pos);
+      
+      if (spawn == null) return; // don't spawn the enemy if it's outside of the map
     }
 
     switch (type)
