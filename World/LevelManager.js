@@ -13,13 +13,18 @@ export class LevelManager {
     this.nextLevel = 0;
 
     this.levels = [
-      {type: 'boss', groundColor: 0xFFFFFF, obstacleColor: 0x555555, enemies: ['phantom', 'phantom','phantom','phantom','phantom','phantom','phantom','phantom','phantom']},
-      {type: 'default', groundColor: 0x4169e1, obstacleColor: 0xDC143C, enemies: []},
-      {type: 'default', groundColor: 0xDDDDDD, obstacleColor: 0x555555, enemies: []},
-      {type: 'boss', groundColor: 0xDDDDDD, obstacleColor: 0x555555, enemies: []},
+      {type: 'default', groundColor: 0xFFFFFF, obstacleColor: 0x555555,
+        enemies: ['phantom', 'phantom','phantom','phantom','phantom', 'turret', 'turret', 'turret']},
+      {type: 'default', groundColor: 0x4169e1, obstacleColor: 0xDC143C,
+        enemies: ['phantom', 'phantom', 'turret', 'turret', 'turret', 'turret', 'chasing', 'chasing', 'chasing']},
+      {type: 'default', groundColor: 0xDDDDDD, obstacleColor: 0x555555,
+        enemies: ['phantom', 'phantom', 'phantom', 'chasing', 'chasing', 'chasing', 'chasing', 'chasing', 'chasing', 'chasing']},
+      {type: 'boss', groundColor: 0xDDDDDD, obstacleColor: 0x555555,
+        enemies: ['boss']},
     ]
   }
 
+  // Loads the next level in the list
   loadNextLevel() {
     this.scene.remove(this.gameMap.gameObject);
     let levelInfo = this.levels[this.nextLevel]
@@ -33,6 +38,7 @@ export class LevelManager {
     this.scene.add(this.gameMap.gameObject);
   }
 
+  // Spawns all enemies in the level data
   instantiateEnemies() {
     let enemyData = this.levels[this.nextLevel].enemies;
     let enemies = [];
