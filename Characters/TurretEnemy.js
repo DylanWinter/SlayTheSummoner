@@ -30,11 +30,14 @@ export class TurretEnemy extends BaseEnemy {
     }
 
 
+    // Main update; called every frame
     update(deltaTime, player, gameMap) {
         super.update(deltaTime, player, gameMap);
         this.state.updateState(this, player, gameMap, deltaTime);
     }
 
+
+    // Fires a projectile at the player
     shootAtPlayer(player, gameMap){
         let direction = VectorUtil.sub(player.location, this.location).normalize();
         let proj = new Projectile(this.location, direction, this.projectileSpeed, false);
@@ -47,6 +50,7 @@ export class TurretEnemy extends BaseEnemy {
 }
 
 
+// Waits until player is in range
 export class ScanningForPlayer extends State {
 
     enterState() {
@@ -67,6 +71,7 @@ export class ScanningForPlayer extends State {
 }
 
 
+// Rapidly fires at player
 export class ShootingAtPlayer extends State {
 
     enterState() {

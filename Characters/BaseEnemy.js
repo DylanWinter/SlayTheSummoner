@@ -36,6 +36,7 @@ export class BaseEnemy {
     this.gameMap = null;
   }
 
+  // Loads a model and applies a material if given
   loadModel(modelPath, material = null) {
     const loader = new GLTFLoader();
     loader.load(
@@ -43,6 +44,7 @@ export class BaseEnemy {
       (gltf) => {
         this.gameObject.remove(this.mesh);
         this.mesh = gltf.scene;
+        // Apply material if given
         if (material) {
           this.mesh.traverse((child) => {
             if (child.isMesh) {
@@ -50,6 +52,7 @@ export class BaseEnemy {
             }
           });
         }
+        // Get animation
         this.gameObject.add(this.mesh);
         if (gltf.animations && gltf.animations.length > 0) {
           this.mixer = new THREE.AnimationMixer(this.mesh);
@@ -128,7 +131,6 @@ export class BaseEnemy {
     force.divideScalar(this.mass);
     this.acceleration.add(force);
   }
-
 
   // Stop our character
   stop() {
@@ -219,6 +221,7 @@ export class BaseEnemy {
   }
 
 
+  // Subtracts amount from health; dies if health reaches 0
   takeDamage(amount) {
     this.health -= amount;
     if (this.health <= 0 && this.isAlive) {
@@ -226,12 +229,16 @@ export class BaseEnemy {
     }
   }
 
+
+  // Dies
   die() {
     this.dropItem();
     this.isAlive = false;
     this.gameObject.parent.remove(this.gameObject);
   }
 
+
+  // Randomly determines whether the enemy will drop an item, and spawns one if so
   dropItem() {
     const chance = Math.random();
     let item;

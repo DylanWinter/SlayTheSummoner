@@ -19,6 +19,7 @@ export class PhantomEnemy extends BaseEnemy {
         this.topSpeed = 5;
         this.damage = 1;
         this.health = 7;
+        // Loads the model, applies a translucent material
         this.loadModel("Assets/Phantom.glb", new THREE.MeshStandardMaterial({
             color: "black",
             transparent: true,
@@ -33,6 +34,7 @@ export class PhantomEnemy extends BaseEnemy {
     }
 
 
+    // Main update; called every frame
     update(deltaTime, player, gameMap) {
         super.update(deltaTime, player, gameMap);
         this.acceleration = this.seek(player.location)
@@ -42,7 +44,6 @@ export class PhantomEnemy extends BaseEnemy {
         if (this.velocity.length() > this.topSpeed) {
             this.velocity.setLength(this.topSpeed);
         }
-
 
         // Point in the direction of movement
         if (this.velocity.length() > 0.1) {
@@ -58,6 +59,7 @@ export class PhantomEnemy extends BaseEnemy {
         this.acceleration.setLength(0);
     }
 
+    // Damages the player on contact
     handleCollisionWithPlayer(player) {
         if (this.location.distanceTo(player.location) <= player.hitboxSize) {
             this.die();

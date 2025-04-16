@@ -28,12 +28,10 @@ export class BossEnemy extends BaseEnemy {
         this.loadModel("Assets/Skeleton_Mage.glb");
     }
 
-
     switchState(state) {
         this.state = state;
         this.state.enterState(this);
     }
-
 
     update(deltaTime, player, gameMap) {
         super.update(deltaTime, player, gameMap);
@@ -44,7 +42,6 @@ export class BossEnemy extends BaseEnemy {
         if (this.velocity.length() > this.topSpeed) {
             this.velocity.setLength(this.topSpeed);
         }
-
 
         // Point in the direction of movement
         if (this.velocity.length() > 0.1) {
@@ -69,6 +66,7 @@ export class BossEnemy extends BaseEnemy {
         this.acceleration.setLength(0);
     }
 
+    // Fire a projectile at the player
     shootAtPlayer(player, gameMap){
         let direction = VectorUtil.sub(player.location, this.location).normalize();
         let proj = new Projectile(this.location, direction, this.projectileSpeed, false);
@@ -76,6 +74,7 @@ export class BossEnemy extends BaseEnemy {
         gameMap.projectiles.push(proj);
     }
 
+    // Called when the enemy dies
     die() {
         super.die();
 
@@ -89,6 +88,7 @@ export class BossEnemy extends BaseEnemy {
 }
 
 
+// First phase
 export class Phase1 extends State {
 
     enterState(enemy) {
@@ -96,7 +96,6 @@ export class Phase1 extends State {
 
         console.log("Phase1");
     }  
-
 
     updateState(enemy, player, gameMap, deltaTime) {
         let distance = enemy.location.distanceTo(player.location);
@@ -129,7 +128,7 @@ export class Phase1 extends State {
     
 }
 
-
+// Second phase
 export class Phase2 extends State {
 
     enterState(enemy) {
@@ -148,7 +147,6 @@ export class Phase2 extends State {
 
         console.log("Phase2");
     }
-
 
     updateState(enemy, player, gameMap, deltaTime) {
         let distance = enemy.location.distanceTo(player.location);
@@ -176,13 +174,13 @@ export class Phase2 extends State {
         else if (distance > 20) { // more aggression
             let steer = enemy.seek(player.location);
             enemy.applyForce(steer);
-        };
+        }
     }
 
 }
 
 
-
+// Third phase: charge the player repeatedly
 export class Phase3 extends State {
 
     enterState(enemy) {
@@ -206,7 +204,6 @@ export class Phase3 extends State {
 
         console.log("Phase3");
     }
-
 
     updateState(enemy, player, gameMap, deltaTime) {
         let distance = enemy.location.distanceTo(player.location);

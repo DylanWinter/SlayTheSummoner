@@ -142,19 +142,12 @@ export class Player {
     this.fireAnim.play();
   }
 
-  // --- Player stats manipulation methods --- //
-
+  // Takes damage, updates UI, triggers i-frames
   takeDamage(amount) {
     if (this.isInvincible || !this.isAlive) return;
 
     this.health -= amount;
     this.ui.updateUI();
-
-    console.log(
-      `You took %c${amount}%c damage.`,
-      "color: red; font-weight: bold;",
-      "color: white;"
-    );
 
     // Sets invincibility for 1 second and causes character to blink
     this.isInvincible = true;
@@ -174,7 +167,7 @@ export class Player {
     }
   }
 
-  
+  // Dies, loads death screen
   die() {
 
     // Creates a death screen that resets the game after 5 seconds
@@ -187,7 +180,7 @@ export class Player {
     }, 5000)
   }
 
-
+  // Heals <amount> of health
   heal(amount) {
     if (!this.isAlive) return; // heal does not happen if the player is dead
     this.health = Math.min(this.maxHealth, this.health + amount);
@@ -197,13 +190,11 @@ export class Player {
 
   }
 
-
   // Used for max health upgrades/downgrades
   changeMaxHealth(amount) {
     this.maxHealth += amount;
     this.ui.updateUI();
   }
-
 
   // Used for strength upgrades/downgrades
   changeStrength(amount) {
@@ -228,7 +219,7 @@ export class Player {
     }, 100);
   }
   
-
+  // Ends invincibility blinking
   stopBlinking() {
     if (!this.mesh) return;
   

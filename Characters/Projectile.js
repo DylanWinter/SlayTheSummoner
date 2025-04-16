@@ -19,6 +19,7 @@ export class Projectile {
     this.gameObject.lookAt(this.direction);
   }
 
+  // Loads the .glb model
   loadModel() {
     const loader = new GLTFLoader();
     loader.load(
@@ -36,6 +37,7 @@ export class Projectile {
     );
   }
 
+  // Main update; called every frame
   update(deltaTime, map, enemies, player) {
     this.location = VectorUtil.add((VectorUtil.multiplyScalar(this.direction, this.speed * deltaTime)), this.location)
     this.handleCollision(this.location, map)
@@ -65,6 +67,7 @@ export class Projectile {
     }
   }
 
+  // Checks for collision with enemies
   handleEnemyCollision(enemy) {
     if (this.location.distanceTo(enemy.location) < enemy.size && this.isAlive && this.isFriendly)
     {
@@ -73,6 +76,7 @@ export class Projectile {
     }
   }
 
+  // Checks for collision with player
   handlePlayerCollision(player) {
     if (this.location.distanceTo(player.location) < player.hitboxSize && this.isAlive && !this.isFriendly) {
       this.isAlive = false

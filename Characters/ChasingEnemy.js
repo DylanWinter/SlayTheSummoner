@@ -17,7 +17,7 @@ export class ChasingEnemy extends BaseEnemy {
 
         this.fireCooldown = 1;
         this.fireTimer = this.fireCooldown;
-        this.fleeRange = 20;
+        this.fleeRange = 15;
         this.range = 35;
         this.health = 4;
 
@@ -30,7 +30,7 @@ export class ChasingEnemy extends BaseEnemy {
         this.state.enterState(this);
     }
 
-
+    // Main update; called every frame
     update(deltaTime, player, gameMap) {
         super.update(deltaTime, player, gameMap);
         this.state.updateState(this, player, gameMap, deltaTime);
@@ -65,6 +65,8 @@ export class ChasingEnemy extends BaseEnemy {
         this.acceleration.setLength(0);
     }
 
+
+    // Fires a projectile at the player
     shootAtPlayer(player, gameMap){
         let direction = VectorUtil.sub(player.location, this.location).normalize();
         let proj = new Projectile(this.location, direction, this.projectileSpeed, false);
@@ -74,6 +76,8 @@ export class ChasingEnemy extends BaseEnemy {
 }
 
 
+
+// Default wandering state; wanders aimlessly
 export class Wandering extends State {
 
     enterState(enemy) {
@@ -96,6 +100,7 @@ export class Wandering extends State {
 }
 
 
+// Uses A* pathfinding to approach the player
 export class PathingToPlayer extends State {
 
     enterState(enemy) {
@@ -144,6 +149,7 @@ export class PathingToPlayer extends State {
 }
 
 
+// Runs away from the player
 export class FleeFromPlayer extends State {
 
     enterState(enemy) {
