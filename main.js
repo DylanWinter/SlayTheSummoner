@@ -1,16 +1,6 @@
 import * as THREE from 'three';
 import { Player } from './Characters/Player.js';
-import { UI } from './Characters/UI.js';
-import {Vector3} from "three";
-import { GameMap } from "./World/GameMap.js";
-import { MapGraph } from "./World/MapGraph.js";
-import { BaseEnemy } from './Characters/BaseEnemy.js';
-import { ChasingEnemy } from './Characters/ChasingEnemy.js';
-import { TurretEnemy } from './Characters/TurretEnemy.js';
 import {LevelManager} from "./World/LevelManager";
-import {MapNode} from "./World/MapNode";
-
-
 
 // Create Scene
 const scene = new THREE.Scene();
@@ -21,18 +11,8 @@ const clock = new THREE.Clock();
 // Create map
 let levelManager;
 
-let mapGraph;
-
 // Create player
 let player = new Player();
-
-// Test NPC
-let enemy;
-
-// Declare the path to follow
-let path;
-let start;
-let end;
 
 // Input handling
 const mouse = new THREE.Vector2();
@@ -62,7 +42,7 @@ function init() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  camera.position.y = 50;
+  camera.position.y = 40;
   camera.lookAt(player.gameObject.position);
 
   // Create Light
