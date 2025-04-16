@@ -23,9 +23,10 @@ HOW TO PLAY:
 
 IMPLEMENTED TOPICS:
 
-1. Collision Avoidance
-	- Enemy NPCs will use collision avoidance while executing simple movement algorithms.
-	- To see this, move close to a ChasingEnemy NPC and force it to move against a wall.
+1. Path Following
+	- Some enemy NPCs will use path following to find their way to you.
+	- To see this, move close enough to a ChasingEnemy NPC to make it follow you.
+		- If you stay close enough but not too close, it will move towards you, following an efficient path even around obstacles.
 
 2. State Machines
 	- Enemy NPCs will use state machines to decide what to do based on their distance from you and their health.
@@ -44,5 +45,5 @@ IMPLEMENTED TOPICS:
 	- To see this, you can reload the page and watch the environment change into another procedurally generated one.
 
 5. Simple Movement Algorithms
-	- Some NPCs will use the wander algorithm to wander around the map before you are within their range.
+	- Some enemy NPCs will use the wander algorithm to wander around the map before you are within their range.
 	- To see this, stay far away from a ChasingEnemy NPC to avoid its detection. You will see it wander using this algorithm.
